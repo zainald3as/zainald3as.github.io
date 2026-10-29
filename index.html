@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Zain: cybersecurity, a dusk alley, an old man reading, and a black cat.">
+<title>Zain's Alley</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Marcellus+SC&family=Alegreya:ital,wght@0,400;0,500;1,400&family=Aref+Ruqaa:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap">
+<style>
+/* Layout concept: one dusk alley in an old Levantine city; the site is walked through, not scrolled past. Single deliberate dusk palette. */
+:root{
+  --night:#141a2e;      /* sky at the top, page ground */
+  --dusk:#2a2440;       /* shadowed stone */
+  --stone:#d8c8a6;      /* limestone */
+  --stone-dim:#a8977a;
+  --lantern:#f1b75a;    /* warm light, the one accent */
+  --tile:#2f7f7a;       /* Damascus tile teal */
+  --olive:#6c7a3d;
+  --eye:#f3d02b;
+  --ink:#ece3cf;        /* text on night */
+  --muted:#b9ad95;
+  --display:"Marcellus SC","Marcellus",Georgia,serif;
+  --body:"Alegreya",Georgia,"Times New Roman",serif;
+  --arabic:"Aref Ruqaa","Amiri","Traditional Arabic",serif;
+  color-scheme:dark;
+}
+html{background:var(--night)}
+body{background:var(--night);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6;margin:0}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- scene ---------- */
+.scene{position:relative;width:100%;aspect-ratio:5/3;max-height:80vh;overflow:hidden;background:var(--night)}
+.scene svg{display:block;width:100%;height:100%}
+.flicker{animation:flicker 3.2s infinite steps(1)}
+@keyframes flicker{0%,100%{opacity:1}42%{opacity:.86}44%{opacity:1}71%{opacity:.92}}
+.glow{animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.55}50%{opacity:.8}}
+
+/* cat */
+#cat{transform:translate(-160px,0)}
+#cat.walking{animation:walk 7.5s cubic-bezier(.45,.05,.55,.95) forwards}
+@keyframes walk{to{transform:translate(560px,0)}}
+#cat .leg{transform-box:fill-box;transform-origin:top center}
+#cat.walking .leg.a{animation:step .5s ease-in-out infinite alternate}
+#cat.walking .leg.b{animation:step .5s ease-in-out infinite alternate-reverse}
+@keyframes step{from{transform:rotate(16deg)}to{transform:rotate(-16deg)}}
+#cat .tail{transform-box:fill-box;transform-origin:0% 100%;animation:sway 3.4s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
+#cat-sit{opacity:0;transition:opacity .5s}
+.sat #cat-walk{opacity:0;transition:opacity .4s}
+.sat #cat-sit{opacity:1}
+.eye{animation:blink 6s infinite}
+.eye{transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+
+/* doors */
+.door{cursor:pointer;outline:none}
+.door .light{opacity:0;transition:opacity .4s}
+.door:hover .light,.door:focus-visible .light,.door.open .light{opacity:1}
+.door:focus-visible .frame{stroke:var(--lantern);stroke-width:3}
+.plaque{font-family:"Marcellus",Georgia,serif;font-size:17px;letter-spacing:.02em;fill:#1f1a14}
+.plaque-k{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;fill:#5a4320}
+
+/* ---------- below the scene ---------- */
+.ground{border-top:1px solid #2f2b45;background:linear-gradient(var(--dusk),var(--night) 60%)}
+.inner{max-width:62rem;margin:0 auto;padding-block:3.5rem 4rem;display:grid;gap:3rem}
+.mine{margin:0 auto;max-width:40rem;display:grid;gap:1.6rem;text-align:center}
+.mine p{margin:0;font-family:"Aref Ruqaa","IM Fell English",Georgia,serif;font-size:clamp(1.45rem,3.3vw,2.2rem);line-height:1.6;color:var(--stone)}
+.mine p span{display:block}
+.mine .open{font-size:.72em;color:var(--muted)}
+.mine .reveal{font-weight:700;color:var(--lantern);font-size:clamp(1.7rem,4vw,2.7rem)}
+.mine .reveal::before{content:"";display:block;width:3.5rem;height:1px;margin:0 auto 1.4rem;background:var(--lantern);opacity:.6}
+.nudge{margin:0;font-family:"IM Fell English",Georgia,serif;font-style:italic;font-size:1.15rem;color:var(--muted)}
+.nudge button{all:unset;cursor:pointer;color:var(--lantern);border-bottom:1px solid var(--lantern)}
+.nudge button:focus-visible{outline:2px solid var(--lantern);outline-offset:3px}
+#reader:focus-visible{outline:2px solid var(--lantern)}
+
+/* the book: grows out of the old man's hands into an open spread */
+.veil[hidden]{display:none}
+.veil{position:fixed;inset:0;z-index:20;background:rgba(10,12,22,.78);display:grid;place-items:center;overflow-y:auto;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.book{--paper:#efe4cb;--paper2:#e3d4b3;--ink2:#2b2117;--rule:#c9b68f;position:relative;width:min(62rem,100%);
+  display:grid;grid-template-columns:1fr 1fr;
+  background:linear-gradient(90deg,var(--paper2),var(--paper) 46%,#c8b590 50%,var(--paper) 54%,var(--paper2));
+  color:var(--ink2);box-shadow:0 40px 80px -20px #000c;border-radius:3px 3px 8px 8px}
+.page{padding:2.6rem 2.3rem 2.2rem;min-width:0;font-family:"IM Fell English",Georgia,serif}
+.cover{margin:0 0 1.4rem;font-size:1.6rem;line-height:1.25}
+.cover span{font-style:italic;font-size:1.1rem;color:#7a5a2c}
+.toc{margin:0;padding:0 0 0 1.3rem;display:grid;gap:.4rem;font-size:1.08rem}
+.toc li::marker{color:#7a5a2c;font-style:italic}
+.toc button{all:unset;cursor:pointer;border-bottom:1px solid transparent}
+.toc button:hover{border-bottom-color:var(--ink2)}
+.toc button[aria-current=true]{font-style:italic;color:#6b2f2a}
+.page.right{display:grid;align-content:start;gap:.7rem;border-left:1px solid var(--rule)}
+.page.right h2{margin:0;font-weight:400;font-size:clamp(1.7rem,3vw,2.2rem);line-height:1.15;text-wrap:balance}
+.when{margin:0;font-style:italic;color:#7a5a2c;min-height:1.2em}
+.field{margin:0;font-style:italic}
+#p-text{margin:0;max-width:58ch;line-height:1.55;font-size:1.1rem}
+.turn{display:flex;align-items:center;gap:1rem;margin-top:1rem;font-style:italic;color:#7a5a2c}
+.turn button,.close{all:unset;cursor:pointer;font-size:1.5rem;line-height:1;padding:.2rem .45rem;color:var(--ink2)}
+.close{position:absolute;top:.5rem;right:.7rem;font-size:1.8rem}
+.book button:focus-visible{outline:2px solid #6b2f2a;outline-offset:2px}
+.flip{animation:flip .45s ease}
+@keyframes flip{from{opacity:.15;transform:translateX(14px)}to{opacity:1;transform:none}}
+@media (max-width:720px){.book{grid-template-columns:1fr;background:var(--paper)}.page.right{border-left:0;border-top:1px solid var(--rule)}.page{padding:2rem 1.3rem 1.6rem}}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  #cat{transform:translate(560px,0)!important}
+}
+</style>
+
+<section class="scene" aria-label="An old Levantine alley at dusk. An old man reads on a wooden chair by the first door while a black cat with yellow eyes walks in and sits under an arch carved with the name Zain.">
+<svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="scn-t">
+  <title id="scn-t">Zain — a dusk alley, an old man reading, a cat</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141a2e"/><stop offset=".55" stop-color="#2a2440"/><stop offset=".85" stop-color="#6b4a5a"/><stop offset="1" stop-color="#b9785c"/>
+    </linearGradient>
+    <linearGradient id="wallL" x1="0" x2="1"><stop offset="0" stop-color="#8f7f64"/><stop offset="1" stop-color="#c9b896"/></linearGradient>
+    <linearGradient id="wallR" x1="1" x2="0"><stop offset="0" stop-color="#8a7a60"/><stop offset="1" stop-color="#c4b391"/></linearGradient>
+    <radialGradient id="lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f1b75a" stop-opacity=".75"/><stop offset="1" stop-color="#f1b75a" stop-opacity="0"/></radialGradient>
+    <pattern id="mash" width="14" height="14" patternUnits="userSpaceOnUse">
+      <rect width="14" height="14" fill="#3b2a1c"/><circle cx="7" cy="7" r="4" fill="none" stroke="#6b4c30" stroke-width="2"/><path d="M0 7h14M7 0v14" stroke="#4f3823" stroke-width="1.5"/>
+    </pattern>
+    <pattern id="cob" width="44" height="22" patternUnits="userSpaceOnUse">
+      <rect width="44" height="22" fill="#5d5242"/><rect x="2" y="2" width="40" height="8" rx="4" fill="#6c604d"/><rect x="-20" y="12" width="40" height="8" rx="4" fill="#665a48"/><rect x="24" y="12" width="40" height="8" rx="4" fill="#665a48"/>
+    </pattern>
+    <pattern id="tilepat" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect width="24" height="24" fill="#2f7f7a"/><path d="M12 2l10 10-10 10L2 12z" fill="#e9dcc0"/><circle cx="12" cy="12" r="3" fill="#b35a3c"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#sky)"/>
+  <!-- stars -->
+  <g fill="#ece3cf" opacity=".7"><circle cx="140" cy="60" r="1.2"/><circle cx="320" cy="110" r="1"/><circle cx="520" cy="40" r="1.4"/><circle cx="760" cy="90" r="1"/><circle cx="980" cy="55" r="1.3"/><circle cx="1100" cy="140" r="1"/><circle cx="640" cy="150" r=".9"/></g>
+  <!-- crescent -->
+  <path d="M930 120a34 34 0 1 0 30 52 28 28 0 1 1-30-52z" fill="#ece3cf" opacity=".9"/>
+
+  <!-- distant rooftops, domes, minaret -->
+  <g fill="#231f36">
+    <rect x="300" y="360" width="600" height="200"/>
+    <path d="M360 360a50 50 0 0 1 100 0z"/><rect x="405" y="290" width="10" height="24"/>
+    <path d="M700 360a70 70 0 0 1 140 0z"/><rect x="765" y="270" width="10" height="22"/>
+    <rect x="560" y="210" width="28" height="160"/><path d="M552 214h44l-22-34z"/><rect x="556" y="250" width="36" height="8"/>
+    <rect x="470" y="330" width="80" height="40"/><rect x="620" y="320" width="70" height="50"/>
+  </g>
+
+  <!-- left wall with mashrabiya and lantern -->
+  <path d="M0 0h330l-20 720H0z" fill="url(#wallL)"/>
+  <g stroke="#7a6a52" stroke-width="1.2" opacity=".55"><path d="M0 120h318M0 240h314M0 360h311M0 480h309M0 600h307"/><path d="M90 0v120M210 120v120M60 240v120M180 360v120M260 480v120M120 600v120"/></g>
+  <rect x="70" y="160" width="170" height="190" fill="#3b2a1c"/>
+  <rect x="80" y="170" width="150" height="170" fill="url(#mash)"/>
+  <rect x="80" y="170" width="150" height="170" fill="#f1b75a" opacity=".12" class="glow"/>
+  <rect x="64" y="348" width="182" height="10" fill="#4f3823"/>
+  <path d="M300 250h-40v8" stroke="#2b2117" stroke-width="4" fill="none"/>
+  <circle cx="260" cy="300" r="90" fill="url(#lamp)" class="flicker"/>
+  <path d="M248 262h24l6 22-6 34h-24l-6-34z" fill="#f1b75a" class="flicker"/><path d="M248 262h24l6 22-6 34h-24l-6-34z" fill="none" stroke="#2b2117" stroke-width="3"/><path d="M252 256h16v6h-16z" fill="#2b2117"/>
+
+  <!-- right wall with tatreez and jasmine -->
+  <path d="M870 0h330v720H890z" fill="url(#wallR)"/>
+  <g stroke="#7a6a52" stroke-width="1.2" opacity=".55"><path d="M875 140h325M880 280h320M884 420h316M888 560h312"/><path d="M1000 0v140M940 140v140M1080 280v140M960 420v140M1120 560v160"/></g>
+  <!-- tatreez in the Jenin manner: white cloth, vertical multicolour stripes, a band of cross-stitch -->
+  <g id="tatreez" aria-hidden="true">
+  <path d="M950 186h188" stroke="#4f3823" stroke-width="5" stroke-linecap="round"/>
+  <rect x="960" y="190" width="168" height="104" fill="#f2ede1"/>
+  <rect x="963" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
+  <rect x="972" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
+  <rect x="981" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
+  <rect x="990" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
+  <rect x="999" y="190" width="2.2" height="104" fill="#6a2e5e" opacity=".55"/>
+  <rect x="1008" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
+  <rect x="1017" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
+  <rect x="1026" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
+  <rect x="1035" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
+  <rect x="1044" y="190" width="2.2" height="104" fill="#6a2e5e" opacity=".55"/>
+  <rect x="1053" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
+  <rect x="1062" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
+  <rect x="1071" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
+  <rect x="1080" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
+  <rect x="1089" y="190" width="2.2" height="104" fill="#6a2e5e" opacity=".55"/>
+  <rect x="1098" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
+  <rect x="1107" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
+  <rect x="1116" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
+  <rect x="1125" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
+  <rect x="960" y="212" width="168" height="50" fill="#f2ede1"/>
+  <rect x="960" y="190" width="168" height="104" fill="none" stroke="#c9b68f" stroke-width="1"/>
+  <path d="M984.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#a3222b" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <path d="M988.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#2a1a1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <path d="M988.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#3e6b3a" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <path d="M988.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1012.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1020.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1068.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1076.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#c99a2e" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <path d="M960.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M964.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1012.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1076.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1124.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#2c3f73" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <path d="M960.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M964.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1012.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1076.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1124.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#6a2e5e" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <path d="M972 294v10" stroke="#a3222b" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M1008 294v10" stroke="#3e6b3a" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M1044 294v10" stroke="#c99a2e" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M1080 294v10" stroke="#2c3f73" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M1116 294v10" stroke="#6a2e5e" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g fill="#3f5a2a"><path d="M880 40c60 20 120 0 190 30s90 60 130 40v40c-50 10-80-20-130-40s-120-10-190-30z"/></g>
+  <g fill="#f4efe2"><circle cx="905" cy="62" r="4"/><circle cx="950" cy="70" r="3.5"/><circle cx="1000" cy="82" r="4"/><circle cx="1040" cy="96" r="3.5"/><circle cx="1090" cy="100" r="4"/><circle cx="1140" cy="118" r="3.5"/><circle cx="1180" cy="112" r="4"/><circle cx="975" cy="90" r="3"/><circle cx="1120" cy="132" r="3"/></g>
+
+  <!-- great arch with the name -->
+  <path d="M330 720V360a270 250 0 0 1 540 0v360h-56V372a214 196 0 0 0-428 0v348z" fill="#cdbd99"/>
+  <path d="M386 372a214 196 0 0 1 428 0" fill="none" stroke="#a8977a" stroke-width="3"/>
+  <g fill="none" stroke="#b3a281" stroke-width="2" opacity=".8">
+    <path d="M330 360a270 250 0 0 1 540 0"/>
+    <path d="M356 300l38 16M372 240l36 26M412 186l28 32M466 146l18 36M530 122l8 38M600 112v40M670 122l-8 38M734 146l-18 36M788 186l-28 32M828 240l-36 26M844 300l-38 16"/>
+  </g>
+  <rect x="452" y="116" width="296" height="96" fill="#bfae8a" stroke="#8f7f64" stroke-width="2"/><rect x="460" y="124" width="280" height="80" fill="none" stroke="#a8977a" stroke-width="1"/>
+  <text x="600" y="156" text-anchor="middle" font-family="Marcellus SC, Marcellus, Georgia, serif" font-size="34" letter-spacing="14" fill="#3a2f22">ZAIN</text>
+  <text x="600" y="196" text-anchor="middle" font-family="Aref Ruqaa, Amiri, serif" font-size="28" fill="#4a3a28">زين</text>
+
+  <!-- ground -->
+  <path d="M0 640h1200v80H0z" fill="url(#cob)"/>
+  <path d="M0 640h1200" stroke="#3b3326" stroke-width="3"/>
+
+  <!-- three doors under / beside the arch -->
+  <g class="door" id="d-qsoc" tabindex="0" role="button" aria-label="Open the QuantumSOC door">
+    <rect class="light" x="410" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
+    <path class="frame" d="M414 640V490a48 48 0 0 1 96 0v150z" fill="#2f4f5a" stroke="#2b2117" stroke-width="2"/>
+    <path d="M424 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#24404a" stroke-width="2"/>
+    <circle cx="492" cy="570" r="3.5" fill="#d9a441"/>
+    <rect x="396.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="399.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="462.0" y="413" text-anchor="middle">GRADUATION</text><text class="plaque" x="462.0" y="431" text-anchor="middle">QuantumSOC</text>
+  </g>
+  <g class="door" id="d-zelto" tabindex="0" role="button" aria-label="Open the ZELTO pentest door">
+    <rect class="light" x="548" y="430" width="104" height="210" fill="#f1b75a" opacity="0"/>
+    <path class="frame" d="M552 640V480a48 48 0 0 1 96 0v160z" fill="#5a2f2f" stroke="#2b2117" stroke-width="2"/>
+    <path d="M562 640V484a38 38 0 0 1 76 0v156" fill="none" stroke="#4a2424" stroke-width="2"/>
+    <circle cx="630" cy="566" r="3.5" fill="#d9a441"/>
+    <rect x="534.0" y="386" width="132" height="44" fill="#d9a441" rx="2"/><rect x="537.0" y="389" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="600.0" y="403" text-anchor="middle">PENTEST</text><text class="plaque" x="600.0" y="421" text-anchor="middle">ZELTO HR</text>
+  </g>
+  <g class="door" id="d-dna" tabindex="0" role="button" aria-label="Open the DNA paper door">
+    <rect class="light" x="686" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
+    <path class="frame" d="M690 640V490a48 48 0 0 1 96 0v150z" fill="#4a5a2f" stroke="#2b2117" stroke-width="2"/>
+    <path d="M700 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#3b4a24" stroke-width="2"/>
+    <circle cx="768" cy="570" r="3.5" fill="#d9a441"/>
+    <rect x="672.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="675.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="738.0" y="413" text-anchor="middle">RESEARCH</text><text class="plaque" x="738.0" y="431" text-anchor="middle">DNA &amp; Privacy</text>
+  </g>
+
+
+  <g class="door" id="d-zeus" tabindex="0" role="button" aria-label="Open the Zeus malware analysis door">
+    <rect class="light" x="32" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
+    <path class="frame" d="M36 640V490a48 48 0 0 1 96 0v150z" fill="#4a2f4f" stroke="#2b2117" stroke-width="2"/>
+    <path d="M46 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#3a2440" stroke-width="2"/>
+    <circle cx="114" cy="570" r="3.5" fill="#d9a441"/>
+    <rect x="18.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="21.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="84.0" y="413" text-anchor="middle">MALWARE LAB</text><text class="plaque" x="84.0" y="431" text-anchor="middle">Zeus Trojan</text>
+  </g>
+  <g class="door" id="d-web" tabindex="0" role="button" aria-label="Open the web application security door">
+    <rect class="light" x="916" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
+    <path class="frame" d="M920 640V490a48 48 0 0 1 96 0v150z" fill="#6b5a2f" stroke="#2b2117" stroke-width="2"/>
+    <path d="M930 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#574924" stroke-width="2"/>
+    <circle cx="998" cy="570" r="3.5" fill="#d9a441"/>
+    <rect x="902.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="905.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="968.0" y="413" text-anchor="middle">WEB SECURITY</text><text class="plaque" x="968.0" y="431" text-anchor="middle">Hardened App</text>
+  </g>
+  <g class="door" id="d-aws" tabindex="0" role="button" aria-label="Open the Zero Trust on AWS door">
+    <rect class="light" x="1056" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
+    <path class="frame" d="M1060 640V490a48 48 0 0 1 96 0v150z" fill="#3a4a4a" stroke="#2b2117" stroke-width="2"/>
+    <path d="M1070 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#2c3a3a" stroke-width="2"/>
+    <circle cx="1138" cy="570" r="3.5" fill="#d9a441"/>
+    <rect x="1042.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="1045.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="1108.0" y="413" text-anchor="middle">CLOUD</text><text class="plaque" x="1108.0" y="431" text-anchor="middle">Zero Trust</text>
+  </g>
+
+  <!-- an old man on a wooden chair by the first door, reading under the lantern -->
+  <g id="reader" tabindex="0" role="button" aria-label="The old man's book: open it to see Zain's projects, 2023 to 2026" style="cursor:pointer">
+    <circle cx="232" cy="560" r="80" fill="url(#lamp)" class="glow"/>
+    <!-- chair -->
+    <path d="M168 540v100M172 600h70M240 600v40M172 612h70" stroke="#4f3823" stroke-width="7" stroke-linecap="round"/>
+    <path d="M166 538h10v66h-10z" fill="#5a3f27"/>
+    <!-- legs and shoes -->
+    <path d="M196 600h44l10 36" stroke="#2c2a33" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M244 636h20" stroke="#1a1410" stroke-width="9" stroke-linecap="round"/>
+    <!-- body: long brown jacket -->
+    <path d="M184 536c4-24 22-32 38-30 14 2 20 16 18 34l-4 62h-52z" fill="#5b4330"/>
+    <!-- arm reaching to the book -->
+    <path d="M222 548c12 10 22 14 30 14" stroke="#4a3626" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <!-- head, beard, flat cap -->
+    <circle cx="226" cy="490" r="15" fill="#c79c78"/>
+    <path d="M214 494c2 18 10 26 18 26s12-10 10-24c-8 6-20 6-28-2z" fill="#e8e2d6"/>
+    <path d="M208 482c2-14 14-20 26-18 10 2 16 8 16 16-12-4-28-4-42 2z" fill="#3a3f45"/>
+    <path d="M232 478l22 2" stroke="#3a3f45" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="234" cy="492" r="1.6" fill="#2b2117"/>
+    <!-- the book, open, glowing a little -->
+    <g id="small-book">
+      <path d="M244 556l14-10 14 10-14 6z" fill="#efe4cb" stroke="#6b2f2a" stroke-width="2"/>
+      <path d="M258 546v16" stroke="#6b2f2a" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- the cat: black, yellow eyes. Walks in from the left, then sits by the doors. -->
+  <g id="cat">
+    <g id="cat-walk" transform="translate(0 0)">
+      <path class="tail" d="M58 598c-26-6-34-34-22-58" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <ellipse cx="96" cy="606" rx="46" ry="20" fill="#0b0b10"/>
+      <rect class="leg a" x="62" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
+      <rect class="leg b" x="78" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
+      <rect class="leg b" x="112" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
+      <rect class="leg a" x="126" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
+      <circle cx="146" cy="588" r="18" fill="#0b0b10"/>
+      <path d="M134 576l2-18 10 12zM152 570l10-12 2 18z" fill="#0b0b10"/>
+      <ellipse class="eye" cx="152" cy="586" rx="3.6" ry="3" fill="#f3d02b"/>
+      <ellipse class="eye" cx="141" cy="586" rx="3.2" ry="3" fill="#f3d02b"/>
+    </g>
+    <g id="cat-sit">
+      <path class="tail" d="M70 638c-30 4-36-18-22-30" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M70 640c-6-30 0-60 26-70 26 8 32 40 26 70z" fill="#0b0b10"/>
+      <circle cx="96" cy="560" r="19" fill="#0b0b10"/>
+      <path d="M82 548l1-20 12 12zM98 540l12-12 1 20z" fill="#0b0b10"/>
+      <ellipse class="eye" cx="89" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/>
+      <ellipse class="eye" cx="103" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/>
+    </g>
+  </g>
+</svg>
+</section>
+
+<main class="ground wrap">
+  <div class="inner">
+    <blockquote class="mine">
+      <p><span class="open">A great man once said:</span>
+        <span>knowledge is limitless,</span>
+        <span>and I am limited.</span>
+        <span>The only thing I envy is knowledge,</span>
+        <span>and that envy drives me on,</span>
+        <span>a goal without an end.</span></p>
+      <p class="reveal">That great man is me.</p>
+    </blockquote>
+    <p class="nudge">The old man by the first door is reading something. <button type="button" id="ask">Look over his shoulder</button></p>
+  </div>
+</main>
+
+<div class="veil" id="veil" hidden>
+  <section class="book" id="the-book" role="dialog" aria-modal="true" aria-label="Projects from my uni years, 2023 to 2026">
+    <button type="button" class="close" id="close" aria-label="Close the book">&#215;</button>
+    <div class="page left">
+      <p class="cover">Projects from my uni years<br><span>2023 &#8211; 2026</span></p>
+      <ol class="toc" id="toc"></ol>
+    </div>
+    <div class="page right" aria-live="polite">
+      <p class="when" id="p-when"></p>
+      <h2 id="p-title"></h2>
+      <p class="field" id="p-field"></p>
+      <p id="p-text"></p>
+      <div class="turn">
+        <button type="button" id="prev" aria-label="Previous page">&#8592;</button>
+        <span id="p-num"></span>
+        <button type="button" id="next" aria-label="Next page">&#8594;</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var cat=document.getElementById('cat');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function sit(){cat.classList.remove('walking');cat.style.transform='translate(560px,0)';cat.classList.add('sat');}
+  if(reduce){sit();}else{
+    setTimeout(function(){cat.classList.add('walking');},400);
+    cat.addEventListener('animationend',function(e){if(e.animationName==='walk')sit();});
+  }
+  // Facts only for now. Zain rewrites each page in his own words.
+  var pages=[
+    {id:null,t:'Airport Management System',w:'Sep – Dec 2024',f:'Programming',x:'A desktop app in Java with a JavaFX interface that schedules departures and landings for private, commercial and cargo planes. It loads flights from CSV, keeps them in its own queue structure, and talks to a small socket server that counts reschedules.'},
+    {id:'d-aws',t:'Zero Trust on AWS',w:'Sep – Dec 2025',f:'Cloud security and risk',x:'A team of five tested a Zero Trust risk plan against AWS’s core services, then added a Business Impact Analysis and a Business Continuity Plan aligned with ISO 22301 and NIST SP 800-34. I wrote the abstract, introduction and conclusion.'},
+    {id:'d-dna',t:'Genealogy websites and the law',w:'Sep \u2013 Dec 2025',f:'Research, law and policy',x:'A 41-page paper on DNA and family-tree sites like Ancestry and MyHeritage: how they collect genetic data, who else uses it, from scientists to police, and how the law protects it, or fails to, in the US, the UAE and eight more countries, from Hungary and China to Israel and Rwanda. I am the first author.'},
+    {id:'d-zeus',t:'Zeus banking Trojan',w:'Jan – Apr 2026',f:'Malware analysis',x:'A team of five took a Zeus/ZBot sample from MalwareBazaar and analysed it statically and dynamically: its code in Ghidra, and its behaviour inside an isolated FLARE VM sandbox.'},
+    {id:'d-zelto',t:'ZELTO HR',w:'Jan – Apr 2026',f:'Penetration testing',x:'As team lead, I built a fake HR company with my team of five (an Ubuntu server, an Android app and a Kali attacker) and broke into it. Eleven vulnerabilities, from SMS phishing and a debug-mode APK to JWT algorithm confusion, SSRF, IDOR and a printer left on its default password.'},
+    {id:'d-web',t:'Campus Lost & Found',w:'Feb – Apr 2026',f:'Web security',x:'A lost-and-found site for students, built twice in PHP and MySQL: once open to local file inclusion, SQL injection, brute force, stored XSS and IDOR, and once with every one of them fixed and re-tested in Burp Suite.'},
+    {id:null,t:'Ransomware at XYZ Corporation',w:'Jan – Apr 2026',f:'Incident response and disaster recovery',x:'A bank with offices in Dubai, London and Singapore. Ransomware encrypts 60% of its databases after the attacker sat in the network for 21 days. With a team of five, I wrote its incident response, disaster recovery and continuity plans: a 72-hour timeline, recovery moved to London, no backup trusted blindly, and notifications under GDPR, DFSA, MAS TRM and PCI-DSS.'},
+    {id:null,t:'Hybrid cipher',w:'Sep 2026 –',f:'Cryptography',x:'A cipher in C mixing Caesar and monoalphabetic blocks with a rotating key table. I built the decryption algorithm, which recovers every shift without guessing.'},
+    {id:'d-qsoc',t:'QuantumSOC',w:'Sep 2026 –',f:'SOC and post-quantum cryptography',x:'My graduation project: a testbed where a real TLS 1.3 handshake runs on ML-KEM-768 and ML-DSA-65, monitored in Splunk, to measure how ready a SOC is for quantum computers.'},
+    {id:null,t:'Cyberus Academy',w:'Sep 2026 –',f:'AI and security training',x:'At Draveron: the AI coach of a cybersecurity training platform, which writes phishing and chat attack scenarios and checks them before learners see them.'}
+  ];
+  var i=0, toc=document.getElementById('toc'), veil=document.getElementById('veil'), bookEl=document.getElementById('the-book'), lastFocus=null;
+  toc.innerHTML=pages.map(function(p,k){return '<li><button type="button" data-k="'+k+'">'+p.t+'</button></li>'}).join('');
+  function show(k){
+    i=(k+pages.length)%pages.length; var p=pages[i];
+    document.getElementById('p-when').textContent=p.w;
+    document.getElementById('p-title').textContent=p.t;
+    document.getElementById('p-field').textContent=p.f;
+    document.getElementById('p-text').textContent=p.x;
+    document.getElementById('p-num').textContent=(i+1)+' of '+pages.length;
+    toc.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-current',+b.dataset.k===i?'true':'false')});
+    var r=bookEl.querySelector('.page.right'); r.classList.remove('flip'); void r.offsetWidth; if(!reduce) r.classList.add('flip');
+  }
+  function openBook(k){
+    lastFocus=document.activeElement;
+    show(typeof k==='number'?k:i);
+    // grow the book out of the old man's hands
+    var sb=document.getElementById('small-book').getBoundingClientRect();
+    veil.hidden=false;
+    var bb=bookEl.getBoundingClientRect();
+    var dx=(sb.left+sb.width/2)-(bb.left+bb.width/2), dy=(sb.top+sb.height/2)-(bb.top+bb.height/2);
+    if(!reduce&&bookEl.animate){
+      bookEl.animate([{transform:'translate('+dx+'px,'+dy+'px) scale(.04)',opacity:.4},{transform:'none',opacity:1}],{duration:650,easing:'cubic-bezier(.2,.7,.2,1)'});
+      veil.animate([{opacity:0},{opacity:1}],{duration:400});
+    }
+    document.getElementById('close').focus();
+  }
+  function closeBook(){veil.hidden=true; if(lastFocus) lastFocus.focus();}
+  toc.addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(+b.dataset.k);});
+  document.getElementById('prev').addEventListener('click',function(){show(i-1)});
+  document.getElementById('next').addEventListener('click',function(){show(i+1)});
+  document.getElementById('close').addEventListener('click',closeBook);
+  veil.addEventListener('click',function(e){if(e.target===veil)closeBook();});
+  document.addEventListener('keydown',function(e){
+    if(veil.hidden)return;
+    if(e.key==='Escape')closeBook();
+    if(e.key==='ArrowRight')show(i+1);
+    if(e.key==='ArrowLeft')show(i-1);
+  });
+  var reader=document.getElementById('reader');
+  function act(fn){return function(e){if(e.type==='click'||e.key==='Enter'||e.key===' '){e.preventDefault();fn();}}}
+  reader.addEventListener('click',act(function(){openBook(0)}));
+  reader.addEventListener('keydown',act(function(){openBook(0)}));
+  document.getElementById('ask').addEventListener('click',function(){openBook(0)});
+  // the doors still work: each opens the book at its own page
+  document.querySelectorAll('.door').forEach(function(d){
+    var k=pages.findIndex(function(p){return p.id===d.id});
+    var go=act(function(){openBook(k)});
+    d.addEventListener('click',go); d.addEventListener('keydown',go);
+  });
+})();
+</script>
+
+
+</html>
